@@ -277,6 +277,7 @@ class HMiner(_ab._utilityPatterns):
 
     def __init__(self, iFile1, minUtil, sep="\t"):
         super().__init__(iFile1, minUtil, sep)
+        self.oFile = None
         self._huiCount = 0
         self._candidates = 0
         self._mapOfTWU = {}
@@ -349,7 +350,7 @@ class HMiner(_ab._utilityPatterns):
                     print("File Not Found")
                     quit()
 
-    @deprecated("It is recommended to use 'mine()' instead of 'startMine()' for mining process. Starting from January 2025, 'startMine()' will be completely terminated.")
+    @deprecated("It is recommended to use 'mine()' instead of 'mine()' for mining process. Starting from January 2025, 'mine()' will be completely terminated.")
     def startMine(self):
         """
         Main program to start the operation
@@ -365,12 +366,12 @@ class HMiner(_ab._utilityPatterns):
         self._finalPatterns = {}
         for line in range(len(self._transactions)):
             items_str = self._transactions[line]
-            utility_str = self._utilities[line]
+            #utility_str = self._utilities[line]
             transUtility = self._utilitySum[line]
             for i in range(0, len(items_str)):
                 item = items_str[i]
                 twu = self._mapOfTWU.get(item)
-                if twu == None:
+                if twu is None:
                     twu = transUtility
                 else:
                     twu += transUtility
@@ -431,7 +432,7 @@ class HMiner(_ab._utilityPatterns):
             for i in range(len(revisedTrans) - 1, -1, -1):
                 pair = revisedTrans[i]
                 mapFMAPItem = self._mapFMAP.get(pair.item)
-                if mapFMAPItem == None:
+                if mapFMAPItem is None:
                     mapFMAPItem = {}
                     self._mapFMAP[pair.item] = mapFMAPItem
                 for j in range(i + 1, len(revisedTrans)):
@@ -463,7 +464,7 @@ class HMiner(_ab._utilityPatterns):
         """
         for i in range(0, len(uList)):
             x = uList[i]
-            soted_prefix = [0] * (len(prefix) + 1)
+            #soted_prefix = [0] * (len(prefix) + 1)
             soted_prefix = prefix[0:len(prefix) + 1]
             soted_prefix.append(x.item)
             if x.sumnu + x.sumCu >= minutil:
@@ -503,9 +504,9 @@ class HMiner(_ab._utilityPatterns):
         exSZ = sz
         for j in range(st + 1, len(culs)):
             mapOfTWUF = self._mapFMAP[x.item]
-            if mapOfTWUF != None:
+            if mapOfTWUF is not None:
                 twuf = mapOfTWUF.get(culs[j].item)
-                if twuf != None and twuf < minutil:
+                if twuf is not None and twuf < minutil:
                     excul[j] = None
                     exSZ = sz - 1
                 else:
@@ -726,7 +727,7 @@ if __name__ == "__main__":
             _ap = HMiner(_ab._sys.argv[1], int(_ab._sys.argv[3]), _ab._sys.argv[4])
         if len(_ab._sys.argv) == 4:  # to consider "\t" as a separator
             _ap = HMiner(_ab._sys.argv[1], int(_ab._sys.argv[3]))
-        _ap.startMine()
+        _ap.mine()
         _ap.mine()
         print("Total number of huis:", len(_ap.getPatterns()))
         _ap.save(_ab._sys.argv[2])

@@ -5,11 +5,11 @@
 # --------------------------------------------------------
 #
 #
-#             import PAMI.sequentialPatternMining.basic.SPAM as alg
+#             import PAMI.sequentialPattern.basic.SPAM as alg
 #
 #             obj = alg.SPAM(iFile, minSup)
 #
-#             obj.startMine()
+#             obj.mine()
 #
 #             sequentialPatternMining = obj.getPatterns()
 #
@@ -123,7 +123,7 @@ class SPAM(_ab._sequentialPatterns):
                 the main algorithm of spam. This can search sstep and istep items and find next patterns, its sstep, and its istep. And call this function again by using them. Recursion until there are no more items available for exploration.
             Sstep(s):
                 To convert bit to ssteo bit.The first time you get 1, you set it to 0 and subsequent ones to 1.(like 010101=>001111, 00001001=>00000111)
-            startMine()
+            mine()
                 Mining process will start from here
             getPatterns()
                 Complete set of patterns will be retrieved with this function
@@ -161,11 +161,11 @@ class SPAM(_ab._sequentialPatterns):
 
     **Sample run of the importing code**:
     -------------------------------------
-            import PAMI.sequentialPatternMining.basic.SPAM as alg
+            import PAMI.sequentialPattern.basic.SPAM as alg
 
             obj = alg.SPAM(iFile, minSup)
 
-            obj.startMine()
+            obj.mine()
 
             sequentialPatternMining = obj.getPatterns()
 
@@ -210,6 +210,7 @@ class SPAM(_ab._sequentialPatterns):
         Storing the complete sequences of the database/input file in a database variable
         """
         self._Database = []
+        temp2 = None
 
         if isinstance(self._iFile, _ab._pd.DataFrame):
             temp = []
@@ -220,15 +221,13 @@ class SPAM(_ab._sequentialPatterns):
                 temp = self._iFile['Transactions'].tolist()
             if "tid" in i:
                 temp2=self._iFile[''].tolist()
-            addList=[]
-            addList.append(temp[0])
+            addList= [temp[0]]
             for k in range(len(temp)-1):
                 if temp2[k]==temp[k+1]:
                     addList.append(temp[k+1])
                 else:
                     self._Database.append(addList)
-                    addList=[]
-                    addList.append(temp[k+1])
+                    addList= [temp[k + 1]]
             self._Database.append(addList)
         if isinstance(self._iFile, str):
             if _ab._validators.url(self._iFile):
@@ -250,7 +249,7 @@ class SPAM(_ab._sequentialPatterns):
 
                             seq = []
                             for i in temp:
-                                k = -2
+                                #k = -2
                                 if len(i)>1:
                                     seq.append(list(sorted(set(i.split()))))
 
@@ -510,7 +509,7 @@ if __name__ == "__main__":
             _ap = SPAM(_ab._sys.argv[1], _ab._sys.argv[3], _ab._sys.argv[4])
         if len(_ab._sys.argv) == 4:
             _ap = SPAM(_ab._sys.argv[1], _ab._sys.argv[3])
-        _ap.startMine()
+        _ap.mine()
         _Patterns = _ap.getPatterns()
         print("Total number of Frequent Patterns:", len(_Patterns))
         _ap.savePatterns(_ab._sys.argv[2])
@@ -521,16 +520,4 @@ if __name__ == "__main__":
         _run = _ap.getRuntime()
         print("Total ExecutionTime in ms:", _run)
     else:
-        _ap = SPAM('test.txt', 2, '\t')
-        _ap.startMine()
-        _Patterns = _ap.getPatterns()
-        _memUSS = _ap.getMemoryUSS()
-        print("Total Memory in USS:", _memUSS)
-        _memRSS = _ap.getMemoryRSS()
-        print("Total Memory in RSS", _memRSS)
-        _run = _ap.getRuntime()
-        print("Total ExecutionTime in ms:", _run)
-        print("Total number of Frequent Patterns:", len(_Patterns))
-        print("Error! The number of input parameters do not match the total number of parameters provided")
-        _ap.save("priOut2.txt")
         print("Error! The number of input parameters do not match the total number of parameters provided")

@@ -256,7 +256,8 @@ class CPPG(_ab._coveragePatterns):
             list2.append([i for i in dict1 if i in list1])
         return list2
 
-    def _buildProjectedDatabase(self, data: List[List[str]], info: List[str]) -> Dict[str, List[List[str]]]:
+    @staticmethod
+    def _buildProjectedDatabase(data: List[List[str]], info: List[str]) -> Dict[str, List[List[str]]]:
         """ To construct the projected database for each prefix
         :param data: list of transactions with support per prefix
         :type data: list
@@ -328,7 +329,8 @@ class CPPG(_ab._coveragePatterns):
             t1 = t1 + self._rankedUp[i] + "\t"
         return t1
 
-    def _convert(self, value: Union[int, float, str]) -> Union[int, float]:
+    @staticmethod
+    def _convert(value: Union[int, float, str]) -> Union[int, float]:
         """
         To convert the given user specified value
 
@@ -352,7 +354,7 @@ class CPPG(_ab._coveragePatterns):
                 value = int(value)
         return value
 
-    @deprecated("It is recommended to use 'mine()' instead of 'startMine()' for mining process. Starting from January 2025, 'startMine()' will be completely terminated.")
+    @deprecated("It is recommended to use 'mine()' instead of 'mine()' for mining process. Starting from January 2025, 'mine()' will be completely terminated.")
     def startMine(self) -> None:
         """ Mining process will start from this function
         """
@@ -475,7 +477,7 @@ if __name__ == "__main__":
             _ap = CPPG(_ab._sys.argv[1], _ab._sys.argv[3], _ab._sys.argv[4], _ab._sys.argv[5], _ab._sys.argv[6])
         if len(_ab._sys.argv) == 6:
             _ap = CPPG(_ab._sys.argv[1], _ab._sys.argv[3], _ab._sys.argv[4], _ab._sys.argv[5])
-        _ap.startMine()
+        _ap.mine()
         _ap.mine()
         print("Total number of Coverage Patterns:", len(_ap.getPatterns()))
         _ap.save(_ab._sys.argv[2])

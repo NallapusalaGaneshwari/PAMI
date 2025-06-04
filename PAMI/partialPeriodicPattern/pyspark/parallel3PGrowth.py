@@ -6,7 +6,7 @@
 #
 #             obj = alg.parallel3PGrowth(iFile, minPS, period,numWorkers)
 #
-#             obj.startMine()
+#             obj.mine()
 #
 #             partialPeriodicPatterns = obj.getPatterns()
 #
@@ -108,8 +108,8 @@ class Node(object):
             for t in child._getTransactions():
                 t[0].append(child.item)
                 yield t
-        if (len(tids)>0):
-            yield ([],tids)
+        if len(tids)>0:
+            yield [],tids
 
     def addChild(self, node): 
         """
@@ -233,10 +233,10 @@ class Tree(object):
         for i in self.summaries[alpha]:
             set1=i.tids
             set2=[]
-            while(i.parent.item!=None):
+            while i.parent.item is not None:
                 set2.append(i.parent.item)
                 i=i.parent
-            if(len(set2)>0):
+            if len(set2)>0:
                 set2.reverse()
                 final_patterns.append(set2)
                 final_sets.append(set1)
@@ -255,7 +255,7 @@ class Tree(object):
         for i in self.summaries[node_val]:
             i.parent.tids +=i.tids
             del i.parent.children[node_val]
-            i=None
+            #i=None
 
     def get_ts(self,j):
         """
@@ -310,16 +310,16 @@ class Tree(object):
         
         """
         for j in sorted(self.summaries,key= lambda x: (self.info.get(x),-x)):
-            if(isResponsible(j)):
+            if isResponsible(j):
                 rec_pattern=prefix.copy()
                 rec_pattern.append(glist[j])
-                yield (rec_pattern,self.info[j])
+                yield rec_pattern,self.info[j]
                 patterns,tids,info=self.get_condition_pattern(j)
                 conditional_tree=Tree()
                 conditional_tree.info=info
                 for pat in range(len(patterns)):
                     conditional_tree.add_transaction_summ(patterns[pat],tids[pat])
-                if(len(patterns)>=1):
+                if len(patterns)>=1:
                     for li_m in conditional_tree.generate_patterns(rec_pattern,glist):
                         yield li_m
             self.remove_node(j)
@@ -383,7 +383,7 @@ class parallel3PGrowth(_ab._partialPeriodicPatterns):
 
     :Methods:
 
-        startMine()
+        mine()
             Mining process will start from here
         getPatterns()
             Complete set of patterns will be retrieved with this function
@@ -406,7 +406,7 @@ class parallel3PGrowth(_ab._partialPeriodicPatterns):
             by decreasing support
         buildTree()
             constrcuts the main tree by setting the root node as null
-        startMine()
+        mine()
             main program to mine the partial periodic patterns
 
     **Executing the code on terminal:**
@@ -430,7 +430,7 @@ class parallel3PGrowth(_ab._partialPeriodicPatterns):
 
             obj = alg.4PGrowth(iFile, periodicSupport, period)
 
-            obj.startMine()
+            obj.mine()
 
             partialPeriodicPatterns = obj.getPatterns()
 
@@ -476,7 +476,7 @@ class parallel3PGrowth(_ab._partialPeriodicPatterns):
 
     numPartitions = 5
 
-    @deprecated("It is recommended to use mine() instead of startMine() for mining process")
+    @deprecated("It is recommended to use mine() instead of mine() for mining process")
     def startMine(self):
         """
         Main method where the patterns are mined by constructing tree.
@@ -496,8 +496,8 @@ class parallel3PGrowth(_ab._partialPeriodicPatterns):
 
         self._period = self._convert(self._period)
         self._minPS = self._convert(self._minPS)
-        minPS = self._minPS
-        period = self._period
+        #minPS = self._minPS
+        #period = self._period
 
         APP_NAME = "4PGrowth"
         conf = SparkConf().setAppName(APP_NAME)
@@ -596,7 +596,7 @@ class parallel3PGrowth(_ab._partialPeriodicPatterns):
         for p in cond_pat:
             p1=[v for v in p if v in up_dict]
             trans=sorted(p1, key= lambda x: (up_dict.get(x),-x), reverse=True)
-            if(len(trans)>0):
+            if len(trans)>0:
                 pat.append(trans)
                 tids.append(cond_tids[count])
             count+=1
@@ -691,7 +691,7 @@ class parallel3PGrowth(_ab._partialPeriodicPatterns):
         inf={}
         # print(rank)
         # print(PSinfo)
-        v=len(perFreqItems)
+        #v=len(perFreqItems)
         for i in rank:
             inf[rank[i]]=PSinfo[i]
             c+=1
@@ -843,7 +843,7 @@ def cond_trans(cond_pat,cond_tids):
     for p in cond_pat:
         p1=[v for v in p if v in up_dict]
         trans=sorted(p1, key= lambda x: (up_dict.get(x),-x), reverse=True)
-        if(len(trans)>0):
+        if len(trans)>0:
             pat.append(trans)
             tids.append(cond_tids[count])
         count+=1
@@ -869,7 +869,7 @@ def getps(tid_list):
     return pf
 
 
-def getPF(self,tid_list):
+def getPF(tid_list):
     tid_list.sort()
     tids=tid_list
     cur=tids[0]
@@ -889,7 +889,7 @@ if __name__ == "__main__":
             _ap = parallel3PGrowth(_sys.argv[1], _sys.argv[3], _sys.argv[4], _sys.argv[5])
         if len(_sys.argv) == 5:
             _ap = parallel3PGrowth(_sys.argv[1], _sys.argv[3], _sys.argv[4])
-        _ap.startMine()
+        _ap.mine()
         print("Total number of Partial Periodic Patterns:", len(_ap.getPatterns()))
         _ap.save(_sys.argv[2])
         print("Total Memory in USS:", _ap.getMemoryUSS())
@@ -903,5 +903,5 @@ if __name__ == "__main__":
 
         _ap = parallel3PGrowth('Temporal_T10I4D100K.csv', minPS, period, '\t')
         _ap.setPartitions(20)
-        _ap.startMine()
+        _ap.mine()
         

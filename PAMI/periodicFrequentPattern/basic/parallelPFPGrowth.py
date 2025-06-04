@@ -8,7 +8,7 @@
 #
 #             obj = alg.parallelPFPGrowth(iFile, minSup, maxPer, numWorkers, sep='\t')
 #
-#             obj.startMine()
+#             obj.mine()
 #
 #             periodicFrequentPatterns = obj.getPatterns()
 #
@@ -57,7 +57,7 @@ import pandas as pd
 from deprecated import deprecated
 
 # from PAMI.periodicFrequentPattern.basic
-import abstract as _ab
+#import abstract as _ab
 
 _maxPer = float()
 _minSup = float()
@@ -112,14 +112,14 @@ class Node(object):
 
         :param level: level of a node
         """
-        if self.item == None:
+        if self.item is None:
             s = "Root("
         else:
             s = "(item=" + str(self.item)
             s += ", count=" + str(self.count)
             for i in self.tids:
                 s += " " + str(i)
-        tabs = "\t".join(['' for i in range(0, level + 2)])
+        tabs = "\t".join(['' for _ in range(0, level + 2)])
         for v in self.children.values():
             s += tabs + "\n"
             s += tabs + v.toString(level=level + 1)
@@ -143,8 +143,8 @@ class Node(object):
                 count -= t[2]
                 t[0].insert(0, child.item)
                 yield t
-        if (count > 0):
-            yield ([], tids, count)
+        if count > 0:
+            yield [], tids, count
 
 
 class PFPTree(object):
@@ -215,7 +215,7 @@ class PFPTree(object):
             child.count += count
             for j in tid:
                 summary.tids.add(j)
-                if (i == len(basket) - 1):
+                if i == len(basket) - 1:
                     child.tids.add(j)
             curr = child
         return self
@@ -288,11 +288,11 @@ class PFPTree(object):
         """
         for item in sorted(self.summaries, reverse=True):
             summary = self.summaries[item]
-            if (isResponsible(item)):
-                if (summary.count >= minCount and self.satisfyPer(summary.tids, maxPer, numTrans)):
-                    yield ([item], summary.count)
+            if isResponsible(item):
+                if summary.count >= minCount and self.satisfyPer(summary.tids, maxPer, numTrans):
+                    yield [item], summary.count
                     for element in self.project(item).extract(minCount, maxPer, numTrans):
-                        yield ([item] + element[0], element[1])
+                        yield [item] + element[0], element[1]
             for element in summary.nodes:
                 parent = element.parent
                 parent.tids |= element.tids
@@ -379,7 +379,7 @@ class parallelPFPGrowth(_ab._periodicFrequentPatterns):
 
     :Methods:
 
-        startMine()
+        mine()
             Mining process will start from here
         getPatterns()
             Complete set of patterns will be retrieved with this function
@@ -429,7 +429,7 @@ class parallelPFPGrowth(_ab._periodicFrequentPatterns):
 
                 obj = alg.parallelPFPGrowth(iFile, minSup, maxPer, numWorkers, sep='\t')
 
-                obj.startMine()
+                obj.mine()
 
                 periodicFrequentPatterns = obj.getPatterns()
 
@@ -470,9 +470,10 @@ class parallelPFPGrowth(_ab._periodicFrequentPatterns):
     __rank = {}
     __rankDup = {}
     _numTrans = str()
+    _perFreqItems = None
 
-    def __init__(self, iFile, minSup, maxPer, numWorker, sep='\t'):
-        super().__init__(iFile, minSup, maxPer, numWorker, sep)
+    def __init__(self, iFile, minSup, maxPer, numWorker):
+        super().__init__(iFile, minSup, maxPer, numWorker)
 
     def func1(self, ps1, tid):
         """
@@ -505,6 +506,8 @@ class parallelPFPGrowth(_ab._periodicFrequentPatterns):
         Calculate the periodicity of a transaction
 
         :param tids: timestamps of a database
+        return: periodicity
+        :param endts: last timestamp
         return: periodicity
 
         """
@@ -615,7 +618,7 @@ class parallelPFPGrowth(_ab._periodicFrequentPatterns):
                 value = int(value)
         return value
 
-    @deprecated("It is recommended to use mine() instead of startMine() for mining process")
+    @deprecated("It is recommended to use mine() instead of mine() for mining process")
     def startMine(self):
         """
         Start the mining process
@@ -759,7 +762,7 @@ if __name__ == "__main__":
                                     _ab._sys.argv[6])
         if len(_ab._sys.argv) == 4:
             _ap = parallelPFPGrowth(_ab._sys.argv[1], _ab._sys.argv[3], _ab._sys.argv[4], _ab._sys.argv[5])
-        _ap.startMine()
+        _ap.mine()
         print("Total number of Frequent Patterns:", _ab.getPatterns())
         _ap.save(_ab._sys.argv[2])
         print("Total Memory in USS:", _ap.getMemoryUSS())
@@ -767,7 +770,7 @@ if __name__ == "__main__":
         print("Total ExecutionTime in ms:", _ap.getRuntime())
     else:
         _ap = parallelPFPGrowth('Temporal_T10I4D100K.csv', 100, 5000, 5, '\t')
-        _ap.startMine()
+        _ap.mine()
         # print("Total number of Frequent Patterns:", len( _ab.getPatterns()))
         # _ap.save(_ab._sys.argv[2])
         _ap.printResults()

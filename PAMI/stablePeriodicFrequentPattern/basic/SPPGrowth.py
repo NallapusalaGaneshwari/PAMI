@@ -10,7 +10,7 @@
 #
 #             obj = alg.SPPGrowth(iFile, minSup, maxPer, maxLa)
 #
-#             obj.startMine()
+#             obj.mine()
 #
 #             Patterns = obj.getPatterns()
 #
@@ -265,7 +265,7 @@ class _Tree:
                     yield q
             self.removeNode(i)
 
-class SPPGrowth():
+class SPPGrowth:
     """
     :Description:   Stable periodic pattern mining aims to dicover all interesting patterns in a temporal database using three contraints minimum support,
                     maximum period and maximum lability, that have support no less than the user-specified minimum support  constraint and lability no
@@ -339,7 +339,7 @@ class SPPGrowth():
 
     :Methods:
 
-        startMine()
+        mine()
             Mining process will start from here
         getPatterns()
             Complete set of patterns will be retrieved with this function
@@ -387,7 +387,7 @@ class SPPGrowth():
 
             obj = alg.topk(iFile, minSup, maxPer, maxLa)
 
-            obj.startMine()
+            obj.mine()
 
             Patterns = obj.getPatterns()
 
@@ -583,7 +583,7 @@ class SPPGrowth():
                 value = int(value)
         return value
 
-    @deprecated("It is recommended to use mine() instead of startMine() for mining process")
+    @deprecated("It is recommended to use mine() instead of mine() for mining process")
     def startMine(self):
         """
         Mining process will start from this function
@@ -596,7 +596,7 @@ class SPPGrowth():
         Mining process will start from this function
         """
 
-        global _minSup, _maxPer, _lno, _maxLa
+        global _minSup, _maxPer,_maxLa # _lno
         self._startTime = _ab._time.time()
         if self._iFile is None:
             raise Exception("Please enter the file path or file name:")
@@ -713,7 +713,7 @@ if __name__ == "__main__":
             _ap = SPPGrowth(_ab._sys.argv[1], _ab._sys.argv[3], _ab._sys.argv[4], _ab._sys.argv[5], _ab._sys.argv[6])
         if len(_ab._sys.argv) == 6:
             _ap = SPPGrowth(_ab._sys.argv[1], _ab._sys.argv[3], _ab._sys.argv[4], _ab._sys.argv[5])
-        _ap.startMine()
+        _ap.mine()
         _ap.mine()
         print("Total number of Patterns:", len(_ap.getPatterns()))
         _ap.save(_ab._sys.argv[2])

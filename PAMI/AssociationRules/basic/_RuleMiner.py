@@ -75,7 +75,7 @@ class Confidence:
         :type suffix: str
         """
         if len(suffix) == 1:
-            conf = self._generaeWithConfidence(prefix, suffix[0])
+            self._generaeWithConfidence(prefix, suffix[0])
         for i in range(len(suffix)):
             suffix1 = suffix[:i] + suffix[i+1:]
             prefix1 = prefix + ' ' + suffix[i]
@@ -94,7 +94,7 @@ class Confidence:
         :type rhs: str
         """
         s = lhs + '\t' + rhs
-        if self._frequentPatterns.get(s) == None:
+        if self._frequentPatterns.get(s) is None:
             return 0
         minimum = self._frequentPatterns[s]
         conflhs = minimum / self._frequentPatterns[lhs]
@@ -167,7 +167,7 @@ class Lift:
         :type rhs: str
         """
         s = lhs + '\t' + rhs
-        if self._frequentPatterns.get(s) == None:
+        if self._frequentPatterns.get(s) is None:
             return 0
         minimum = self._frequentPatterns[s]
         conflhs = minimum / self._frequentPatterns[lhs]
@@ -223,7 +223,7 @@ class Leverage:
         :type suffix: str
         """
         if len(suffix) == 1:
-            conf = self._generateWithLeverage(prefix, suffix[0])
+            self._generateWithLeverage(prefix, suffix[0])
         for i in range(len(suffix)):
             suffix1 = suffix[:i] + suffix[i+1:]
             prefix1 = prefix + ' ' + suffix[i]
@@ -241,7 +241,7 @@ class Leverage:
         :type rhs: str
         """
         s = lhs + '\t' + rhs
-        if self._frequentPatterns.get(s) == None:
+        if self._frequentPatterns.get(s) is None:
             return 0
         minimum = self._frequentPatterns[s]
         conflhs = minimum / self._frequentPatterns[lhs]
@@ -263,7 +263,7 @@ class Leverage:
             suffix = self._singleItems[:i] + self._singleItems[i+1:]
             prefix = self._singleItems[i]
             for j in range(i+1, len(self._singleItems)):
-                conf = self._generateWithLeverage(self._singleItems[i], self._singleItems[j])
+                self._generateWithLeverage(self._singleItems[i], self._singleItems[j])
             self._generation(prefix, suffix)
 
 class RuleMiner:
@@ -379,6 +379,11 @@ class RuleMiner:
         self._threshold = threshold
         self._finalPatterns = {}
         self._sep = sep
+        self._memoryUSS = float()
+        self._memoryRSS = float()
+        self._startTime = None
+        self._endTime = None
+        self._oFile = str
     
     def _readPatterns(self):
         """
@@ -387,7 +392,7 @@ class RuleMiner:
         self._frequentPatterns = {}
         k = []
         if isinstance(self._iFile, _ab._pd.DataFrame):
-            pattern, sup = [], []
+            pattern, support = [], []
             if self._iFile.empty:
                 print("its empty..")
             i = self._iFile.columns.values.tolist()
@@ -424,7 +429,7 @@ class RuleMiner:
                     quit()
         return k
 
-    @deprecated("It is recommended to use 'mine()' instead of 'startMine()' for mining process. Starting from January 2025, 'startMine()' will be completely terminated.")
+    @deprecated("It is recommended to use 'mine()' instead of 'mine()' for mining process. Starting from January 2025, 'mine()' will be completely terminated.")
     def startMine(self):
         """
         Association rule mining process will start from here
@@ -542,8 +547,8 @@ if __name__ == "__main__":
         if len(_ab._sys.argv) == 6:
             _ap = RuleMiner(_ab._sys.argv[1], _ab._sys.argv[3], float(_ab._sys.argv[4]), _ab._sys.argv[5])
         if len(_ab._sys.argv) == 5:
-            _ap = RuleMiner(_ab._sys.argv[1], _ab._sys.argv[3], _ab._sys.argv[4])
-        _ap.startMine()
+            _ap = RuleMiner(_ab._sys.argv[1], _ab._sys.argv[3], float(_ab._sys.argv[4]),sep='\t')
+        _ap.mine()
         _ap.mine()
         print("Total number of Association Rules:", len(_ap.getPatterns()))
         _ap.save(_ab._sys.argv[2])
@@ -552,7 +557,7 @@ if __name__ == "__main__":
         print("Total ExecutionTime in ms:", _ap.getRuntime())
     else:
         _ap = RuleMiner('sensorOutput.txt', "lift", 0.5, '\t')
-        _ap.startMine()
+        _ap.mine()
         _ap.mine()
         _ap.save('output.txt')
         _ap.printResults()

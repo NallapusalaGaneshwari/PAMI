@@ -252,7 +252,7 @@ class CFPGrowthPlus(_fp._frequentPatterns):
 
     :Methods:
 
-        startMine()
+        mine()
             Mining process will start from here
         getPatterns()
             Complete set of patterns will be retrieved with this function
@@ -278,11 +278,11 @@ class CFPGrowthPlus(_fp._frequentPatterns):
 
        Format:
 
-       (.venv) $ python3 CFPGrowthPlus.py <inputFile> <outputFile>
+       (.venv) $ python3 _CFPGrowthPlus.py <inputFile> <outputFile>
 
        Examples:
 
-       (.venv) $ python3 CFPGrowthPlus.py sampleDB.txt patterns.txt MISFile.txt
+       (.venv) $ python3 _CFPGrowthPlus.py sampleDB.txt patterns.txt MISFile.txt
 
 
                 .. note:: minSup  will be considered in support count or frequency
@@ -296,7 +296,7 @@ class CFPGrowthPlus(_fp._frequentPatterns):
 
             obj = alg.CFPGrowthPlus(iFile, mIS)
 
-            obj.startMine()
+            obj.mine()
 
             frequentPatterns = obj.getPatterns()
 
@@ -503,7 +503,7 @@ class CFPGrowthPlus(_fp._frequentPatterns):
             temp = temp + self.__rankDup[i] + " "
         return temp
 
-    @deprecated("It is recommended to use mine() instead of startMine() for mining process")
+    @deprecated("It is recommended to use mine() instead of mine() for mining process")
     def startMine(self):
         """
         main program to start the operation

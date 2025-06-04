@@ -6,7 +6,7 @@
 #
 #             obj = alg.TopkPFPGrowth(iFile, k, maxPer,oFile)
 #
-#             obj.startMine()
+#             obj.mine()
 #
 #             periodicFrequentPatterns = obj.getPatterns()
 #
@@ -96,7 +96,7 @@ class TopkPFPGrowth(_ab._periodicFrequentPatterns):
 
     :Methods:
 
-        startMine()
+        mine()
             Mining process will start from here
         getPatterns()
             Complete set of patterns will be retrieved with this function
@@ -141,7 +141,7 @@ class TopkPFPGrowth(_ab._periodicFrequentPatterns):
 
             obj = alg.TopkPFPGrowth(iFile, k, maxPer)
 
-            obj.startMine()
+            obj.mine()
 
             periodicFrequentPatterns = obj.getPatterns()
 
@@ -272,7 +272,7 @@ class TopkPFPGrowth(_ab._periodicFrequentPatterns):
         self._maxPer = self._convert(self._maxPer)
         self._k = self._convert(self._k)
         self._mapSupport = {k: [v[0], v[1]] for k, v in self._mapSupport.items() if v[1] <= self._maxPer}
-        plist = [key for key, value in sorted(self._mapSupport.items(), key=lambda x: (x[1][0], x[0]), reverse=True)]
+        plist = [key for key, value in sorted(self._mapSupport.items(), key=lambda _x: (_x[1][0], _x[0]), reverse=True)]
         self._finalPatterns = {}
         #print(len(plist))
         for i in plist:
@@ -291,7 +291,7 @@ class TopkPFPGrowth(_ab._periodicFrequentPatterns):
         :return: support, periodicity
         """
 
-        global lno
+        #global lno
         timeStamps.sort()
         cur = 0
         per = list()
@@ -331,7 +331,7 @@ class TopkPFPGrowth(_ab._periodicFrequentPatterns):
                                   sorted(self._finalPatterns.items(), key=lambda item: item[1], reverse=True)}
                 self._minimum = min([self._finalPatterns[i][0] for i in self._finalPatterns.keys()])
         else:
-            for x, y in sorted(self._finalPatterns.items(), key=lambda x: x[1][0]):
+            for x, y in sorted(self._finalPatterns.items(), key=lambda x_: x_[1][0]):
                 if val[0] > y[0]:
                     del self._finalPatterns[x]
                     self._finalPatterns[x] = y
@@ -377,7 +377,7 @@ class TopkPFPGrowth(_ab._periodicFrequentPatterns):
             self._Generation(newPrefix, classItemSets, classTidSets)
             self._save(prefix, list(set(itemSetX)), tidSetI)
 
-    @deprecated("It is recommended to use mine() instead of startMine() for mining process")
+    @deprecated("It is recommended to use mine() instead of mine() for mining process")
     def startMine(self):
         """
         Main function of the program
@@ -522,7 +522,7 @@ if __name__ == "__main__":
             _ap = TopkPFPGrowth(_ab._sys.argv[1], _ab._sys.argv[3], _ab._sys.argv[4], _ab._sys.argv[5])
         if len(_ab._sys.argv) == 5:
             _ap = TopkPFPGrowth(_ab._sys.argv[1], _ab._sys.argv[3], _ab._sys.argv[4])
-        _ap.startMine()
+        _ap.mine()
         print("Top K Periodic-Frequent Patterns:", len(_ap.getPatterns()))
         _ap.save(_ab._sys.argv[2])
         print("Total Memory in USS:",  _ap.getMemoryUSS())

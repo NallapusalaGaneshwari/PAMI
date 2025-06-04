@@ -8,7 +8,7 @@
 #
 #             obj = alg.RHUIM("input.txt", 35, 20)
 #
-#             obj.startMine()
+#             obj.mine()
 #
 #             frequentPatterns = obj.getPatterns()
 #
@@ -30,8 +30,6 @@
 #
 #             print("Total ExecutionTime in seconds:", run)
 #
-
-
 
 
 __copyright__ = """
@@ -171,7 +169,7 @@ class _Transaction:
                 j -= 1
             self.items[j + 1] = key
             self.utilities[j + 1] = utilityJ
-        
+
 
 class _Dataset:
     """
@@ -196,6 +194,7 @@ class _Dataset:
     """
     transactions = []
     maxItem = 0
+
     def __init__(self, datasetPath: str, sep: str) -> None:
         self.strToInt = {}
         self.intToStr = {}
@@ -245,7 +244,8 @@ class _Dataset:
                             itemsString = [x for x in itemsString if x]
                             utilityString = trans_list[2].strip().split(self.sep)
                             utilityString = [x for x in utilityString if x]
-                            self.transactions.append(self.createTransaction(itemsString, utilityString, transactionUtility))
+                            self.transactions.append(
+                                self.createTransaction(itemsString, utilityString, transactionUtility))
                 except IOError:
                     print("File Not Found")
                     quit()
@@ -357,7 +357,7 @@ class RHUIM(_ab._utilityPatterns):
 
     :Methods:
 
-        startMine()
+        mine()
                 Mining process will start from here
         getPatterns()
                 Complete set of patterns will be retrieved with this function
@@ -413,7 +413,7 @@ class RHUIM(_ab._utilityPatterns):
 
             obj=alg.RHUIM("input.txt", 35, 20)
 
-            obj.startMine()
+            obj.mine()
 
             frequentPatterns = obj.getPatterns()
 
@@ -450,14 +450,14 @@ class RHUIM(_ab._utilityPatterns):
     _singleItemSetsUtilities = {}
     _strToInt = {}
     _intToStr = {}
-    _temp = [0]*5000
+    _temp = [0] * 5000
     _patternCount = int()
     _maxMemory = 0
     _startTime = float()
     _endTime = float()
     _finalPatterns = {}
     _iFile = " "
-    _oFile = " "
+    oFile = " "
     _nFile = " "
     _lno = 0
     _sep = "\t"
@@ -465,11 +465,15 @@ class RHUIM(_ab._utilityPatterns):
     _minUR = 0
     _memoryUSS = float()
     _memoryRSS = float()
+    _dataset = None
 
-    def __init__(self, iFile: str, minUtil: int, minUR: float, sep: str="\t") -> None:
+    def __init__(self, iFile: str, minUtil: int, minUR: float, sep: str = "\t") -> None:
         super().__init__(iFile, minUtil, minUR, sep)
 
     def startMine(self) -> None:
+        self.mine()
+
+    def mine(self) -> None:
         """
         Mining process will start from this function
         :return: None
@@ -516,7 +520,8 @@ class RHUIM(_ab._utilityPatterns):
         self._memoryRSS = process.memory_info().rss
         print("Relative High Utility patterns were generated successfully using RHUIM algorithm")
 
-    def _backTrackingRHUIM(self, transactionsOfP: list, itemsToKeep: list, itemsToExplore: list, prefixLength: int, utilitySumP: int) -> None:
+    def _backTrackingRHUIM(self, transactionsOfP: list, itemsToKeep: list, itemsToExplore: list, prefixLength: int,
+                           utilitySumP: int) -> None:
         """
         A method to mine the RHUIs Recursively
 
@@ -565,7 +570,8 @@ class RHUIM(_ab._utilityPatterns):
                                     positionProjection += 1
                                 previousTransaction.prefixUtility += projectedTransaction.prefixUtility
                                 sumUtilities = previousTransaction.prefixUtility
-                                previousTransaction = _Transaction(items, utilities, previousTransaction.transactionUtility + projectedTransaction.transactionUtility)
+                                previousTransaction = _Transaction(items, utilities,
+                                                                   previousTransaction.transactionUtility + projectedTransaction.transactionUtility)
                                 previousTransaction.prefixUtility = sumUtilities
                             else:
                                 positionPrevious = 0
@@ -650,7 +656,7 @@ class RHUIM(_ab._utilityPatterns):
         """
         self._patternCount += 1
         s1 = str()
-        for i in range(0, tempPosition+1):
+        for i in range(0, tempPosition + 1):
             s1 += self._dataset.intToStr.get((self._temp[i]))
             if i != tempPosition:
                 s1 += "\t"
@@ -793,7 +799,7 @@ class RHUIM(_ab._utilityPatterns):
             dataFrame = _ab._pd.DataFrame(data, columns=['Patterns', 'Utility', 'UtilityRatio'])
 
         return dataFrame
-    
+
     def getPatterns(self) -> dict:
         """ Function to send the set of patterns after completion of the mining process
 
@@ -841,7 +847,7 @@ class RHUIM(_ab._utilityPatterns):
         :return: returning total amount of runtime taken by the mining process
         :rtype: float
        """
-        return self._endTime-self._startTime
+        return self._endTime - self._startTime
 
     def printResults(self) -> None:
         """
@@ -851,17 +857,17 @@ class RHUIM(_ab._utilityPatterns):
         print("Total number of Relative Utility Patterns:", len(self.getPatterns()))
         print("Total Memory in USS:", self.getMemoryUSS())
         print("Total Memory in RSS", self.getMemoryRSS())
-        print("Total ExecutionTime in ms:",  self.getRuntime())
+        print("Total ExecutionTime in ms:", self.getRuntime())
 
 
 if __name__ == '__main__':
     _ap = str()
     if len(_ab._sys.argv) == 5 or len(_ab._sys.argv) == 6:
-        if len(_ab._sys.argv) == 6:    #includes separator
+        if len(_ab._sys.argv) == 6:  #includes separator
             _ap = RHUIM(_ab._sys.argv[1], int(_ab._sys.argv[3]), float(_ab._sys.argv[4]), _ab._sys.argv[5])
-        if len(_ab._sys.argv) == 5:    #takes "\t" as a separator
+        if len(_ab._sys.argv) == 5:  #takes "\t" as a separator
             _ap = RHUIM(_ab._sys.argv[1], int(_ab._sys.argv[3]), float(_ab._sys.argv[4]))
-        _ap.startMine()
+        _ap.mine()
         print("Total number of Relative High Utility Patterns:", len(_ap.getPatterns()))
         _ap.save(_ab._sys.argv[2])
         print("Total Memory in USS:", _ap.getMemoryUSS())
@@ -869,7 +875,7 @@ if __name__ == '__main__':
         print("Total ExecutionTime in seconds:", _ap.getRuntime())
     else:
         _ap = RHUIM('/Users/likhitha/Downloads/utility_datasets/Utility_T10I4D100K.csv', 150000, 0.6, '\t')
-        _ap.startMine()
+        _ap.mine()
         print("Total number of Relative High Utility Patterns:", len(_ap.getPatterns()))
         _ap.save(_ab._sys.argv[2])
         print("Total Memory in USS:", _ap.getMemoryUSS())

@@ -54,7 +54,7 @@ Copyright (C)  2021 Rage Uday Kiran
 
 
 from PAMI.AssociationRules.basic import abstract as _ab
-from typing import List, Dict, Tuple, Set, Union, Any, Generator
+#from typing import List, Dict, Tuple, Set, Union, Any, Generator
 from deprecated import deprecated
 
 
@@ -97,7 +97,7 @@ class _Leverage:
 
 
         if len(suffix) == 1:
-            conf = self._generateWithLeverage(prefix, suffix[0])
+            self._generateWithLeverage(prefix, suffix[0])
         for i in range(len(suffix)):
             suffix1 = suffix[:i] + suffix[i + 1:]
             prefix1 = prefix + ' ' + suffix[i]
@@ -118,7 +118,7 @@ class _Leverage:
         :rtype: float
         """
         s = lhs + '\t' + rhs
-        if self._frequentPatterns.get(s) == None:
+        if self._frequentPatterns.get(s) is None:
             return 0
         minimum = self._frequentPatterns[s]
         conf_lhs = minimum / self._frequentPatterns[lhs]
@@ -140,7 +140,7 @@ class _Leverage:
             suffix = self._singleItems[:i] + self._singleItems[i + 1:]
             prefix = self._singleItems[i]
             for j in range(i + 1, len(self._singleItems)):
-                conf = self._generateWithLeverage(self._singleItems[i], self._singleItems[j])
+                self._generateWithLeverage(self._singleItems[i], self._singleItems[j])
             self._generation(prefix, suffix)
 
 
@@ -234,10 +234,19 @@ class ARWithLeverage:
         :type sep: str
         :return: None
         """
+        self._frequentPattern = None
         self._iFile = iFile
         self._minConf = minConf
         self._finalPatterns = {}
         self._sep = sep
+        self._startTime = None
+        self._endTime = None
+        self._memoryUSS = float()
+        self._memoryRSS = float()
+        self._oFile = str
+
+
+
 
     def _readPatterns(self) -> list:
         """
@@ -250,7 +259,7 @@ class ARWithLeverage:
         self._frequentPatterns = {}
         k = []
         if isinstance(self._iFile, _ab._pd.DataFrame):
-            pattern, sup = [], []
+            pattern, support = [], []
             if self._iFile.empty:
                 print("its empty..")
             i = self._iFile.columns.values.tolist()
@@ -287,7 +296,7 @@ class ARWithLeverage:
                     quit()
         return k
 
-    @deprecated("It is recommended to use 'mine()' instead of 'startMine()' for mining process. Starting from January 2025, 'startMine()' will be completely terminated.")
+    @deprecated("It is recommended to use 'mine()' instead of 'mine()' for mining process. Starting from January 2025, 'mine()' will be completely terminated.")
     def startMine(self) -> None:
         """
         Association rule mining process will start from here
@@ -305,8 +314,6 @@ class ARWithLeverage:
         self._finalPatterns = a._finalPatterns
         self._endTime = _ab._time.time()
         process = _ab._psutil.Process(_ab._os.getpid())
-        self._memoryUSS = float()
-        self._memoryRSS = float()
         self._memoryUSS = process.memory_full_info().uss
         self._memoryRSS = process.memory_info().rss
         print("Association rules successfully  generated from frequent patterns ")
@@ -402,8 +409,8 @@ if __name__ == "__main__":
         if len(_ab._sys.argv) == 5:
             _ap = ARWithLeverage(_ab._sys.argv[1], float(_ab._sys.argv[3]), _ab._sys.argv[4])
         if len(_ab._sys.argv) == 4:
-            _ap = ARWithLeverage(_ab._sys.argv[1], _ab._sys.argv[3])
-        _ap.startMine()
+            _ap = ARWithLeverage(_ab._sys.argv[1], float(_ab._sys.argv[3]),sep='\t')
+        _ap.mine()
         _ap.mine()
         print("Total number of Association Rules:", len(_ap.getPatterns()))
         _ap.save(_ab._sys.argv[2])

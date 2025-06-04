@@ -8,7 +8,7 @@
 #
 #             obj = alg.RSFPGrowth(iFile, minSup, __minRatio)
 #
-#             obj.startMine()
+#             obj.mine()
 #
 #             frequentPatterns = obj.getPatterns()
 #
@@ -52,9 +52,9 @@ __copyright__ = """
 
 """
 
-from PAMI.relativeFrequentPattern.basic import abstract as _ab
+#from PAMI.relativeFrequentPattern.basic import abstract as _ab
 from typing import List, Dict, Tuple, Set, Union, Any, Generator
-import pandas as pd
+#import pandas as pd
 
 from PAMI.relativeFrequentPattern.basic import abstract as _ab
 import pandas as pd
@@ -217,7 +217,7 @@ class _Tree:
         for x, y in __mapSupport.items():
             if y >= minSup:
                 t1.append(x)
-        __itemSetBuffer = [k for k, v in sorted(__mapSupport.items(), key=lambda x: x[1], reverse=True)]
+        __itemSetBuffer = [k for k, v in sorted(__mapSupport.items(), key=lambda _x: _x[1], reverse=True)]
         self.headerList = [i for i in t1 if i in __itemSetBuffer]
 
     def addPrefixPath(self, prefix: List['_Node'], __mapSupportBeta: Dict[int, int], minSup: float) -> None:
@@ -308,7 +308,7 @@ class RSFPGrowth(_ab._frequentPatterns):
 
     :Methods:
 
-        startMine()
+        mine()
             Mining process will start from here
         getFrequentPatterns()
             Complete set of patterns will be retrieved with this function
@@ -362,7 +362,7 @@ class RSFPGrowth(_ab._frequentPatterns):
 
             obj = alg.RSFPGrowth(iFile, minSup, __minRatio)
 
-            obj.startMine()
+            obj.mine()
 
             frequentPatterns = obj.getPatterns()
 
@@ -408,6 +408,7 @@ class RSFPGrowth(_ab._frequentPatterns):
     __fpNodeTempBuffer = []
     __itemSetCount = 0
     __maxPatternLength = 1000
+    __oFile = None
 
     def __init__(self, iFile: Union[str, pd.DataFrame], minSup: Union[int, float, str], minRS: float, sep: str='\t') -> None:
         super().__init__(iFile, minSup, minRS, sep)
@@ -601,7 +602,7 @@ class RSFPGrowth(_ab._frequentPatterns):
                 value = int(value)
         return value
 
-    @deprecated("It is recommended to use mine() instead of startMine() for mining process")
+    @deprecated("It is recommended to use mine() instead of mine() for mining process")
     def startMine(self) -> None:
         """
         Main program to start the operation
@@ -639,7 +640,7 @@ class RSFPGrowth(_ab._frequentPatterns):
         self.__memoryUSS = process.memory_full_info().uss
         self.__memoryRSS = process.memory_info().rss
 
-    def Mine(self) -> None:
+    def mine(self) -> None:
             """
             Main program to start the operation
             :return: None
@@ -787,7 +788,7 @@ if __name__ == "__main__":
             _ap = RSFPGrowth(_ab._sys.argv[1], _ab._sys.argv[3], _ab._sys.argv[4], _ab._sys.argv[5])
         if len(_ab._sys.argv) == 5:
             _ap = RSFPGrowth(_ab._sys.argv[1], _ab._sys.argv[3], _ab._sys.argv[4])
-        _ap.startMine()
+        _ap.mine()
         print("Total number of Frequent Patterns:", len(_ap.getPatterns()))
         _ap.save(_ab._sys.argv[2])
         print("Total Memory in USS:", _ap.getMemoryUSS())

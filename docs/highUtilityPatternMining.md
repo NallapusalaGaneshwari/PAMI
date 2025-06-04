@@ -121,7 +121,7 @@ foo@bar: cd PAMI/highUtilityPattern/basic
 ```
 * Execute the python program on their terminal using the following syntax:
 ```console
-foo@bar: python3 algorithmName.py inputFile outputFile minUtil seperator
+foo@bar: python3 algorithmName.py iFile outputFile minUtil seperator
 ```
 
 __Example:__ python3 `EFIM.py` `inputFile.txt` `outputFile.txt` $20$ &nbsp; `' '`
@@ -140,7 +140,7 @@ seperator = ' '               #specify the seperator. Default seperator is tab s
 oFile = 'utilityPatterns.txt'   #specify the output file name
 
 obj = alg.EFIM(iFile, minUtil, seperator) #initialize the algorithm 
-obj.startMine()                       #start the mining process 
+obj.mine()                       #start the mining process 
 obj.save(oFile)               #store the patterns in file 
 df = obj.getPatternsAsDataFrame()     #Get the patterns discovered into a dataframe 
 obj.printResults()                      #Print the stats of mining process

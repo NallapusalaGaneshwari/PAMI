@@ -275,7 +275,7 @@ class cuEclatBit(_ab._frequentPatterns):
 
         return bitRep
 
-    @deprecated("It is recommended to use 'mine()' instead of 'startMine()' for mining process. Starting from January 2025, 'startMine()' will be completely terminated.")
+    @deprecated("It is recommended to use 'mine()' instead of 'mine()' for mining process. Starting from January 2025, 'mine()' will be completely terminated.")
     def startMine(self):
         """
         Frequent pattern mining process will start from here
@@ -289,7 +289,7 @@ class cuEclatBit(_ab._frequentPatterns):
         self._Database = []
         self._startTime = _ab._time.time()
         self._creatingItemSets()
-        itemsList = sorted(list(set.union(*self._Database)))  # because Database is list
+        #itemsList = sorted(list(set.union(*self._Database)))  # because Database is list
         self._minSup = self._convert(self._minSup)
 
         ArraysAndItems = self.arraysAndItems()
@@ -305,18 +305,18 @@ class cuEclatBit(_ab._frequentPatterns):
                 # print(i, "/", len(ArraysAndItems), end="\r")
                 for j in range(i+1, len(ArraysAndItems)):
                     jList = list(keys[j])
-                    union = []
+                    #union = []
                     if iList[:-1] == jList[:-1] and iList[-1] != jList[-1]:
                         union = iList + [jList[-1]]
                         union = tuple(union)
                         unionData = _ab._cp.bitwise_and(ArraysAndItems[keys[i]], ArraysAndItems[keys[j]])
-                        sum = _ab._cp.zeros(1, dtype=_ab._np.uint32)
-                        self._sumKernel((len(unionData) // 32 + 1,), (32,), (unionData, sum, _ab._cp.uint32(len(unionData))))
-                        sum = sum[0]
-                        if sum >= self._minSup and union not in self._finalPatterns:
+                        _sum = _ab._cp.zeros(1, dtype=_ab._np.uint32)
+                        self._sumKernel((len(unionData) // 32 + 1,), (32,), (unionData, _sum, _ab._cp.uint32(len(unionData))))
+                        _sum = _sum[0]
+                        if _sum >= self._minSup and union not in self._finalPatterns:
                             newArraysAndItems[union] = unionData
                             string = "\t".join(union)
-                            self._finalPatterns[string] = sum
+                            self._finalPatterns[string] = _sum
             ArraysAndItems = newArraysAndItems
             # print()
 
@@ -408,7 +408,7 @@ if __name__ == "__main__":
             _ap = cuEclatBit(_ab._sys.argv[1], _ab._sys.argv[3], _ab._sys.argv[4])
         if len(_ab._sys.argv) == 4:
             _ap = cuEclatBit(_ab._sys.argv[1], _ab._sys.argv[3])
-        _ap.startMine()
+        _ap.mine()
         _ap.mine()
         print("Total number of Frequent Patterns:", len(_ap.getPatterns()))
         _ap.save(_ab._sys.argv[2])
@@ -420,7 +420,7 @@ if __name__ == "__main__":
 
 """_ap = cuEclat("/home/tarun/PAMI/PAMI/frequentPattern/cuda/test.txt", 2, " ")
     _ap = cuEclat("/home/tarun/Transactional_T10I4D100K.csv", 450, "\t")
-    _ap.startMine()
+    _ap.mine()
     _ap.mine()
     print("Total number of Frequent Patterns:", len(_ap.getPatterns()))
     print("Total Memory in USS:", _ap.getMemoryUSS())

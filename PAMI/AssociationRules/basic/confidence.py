@@ -153,7 +153,7 @@ class confidence:
     _memoryRSS = float()
     _associationRules = {}
 
-    def __init__(self, iFile, minConf, sep):
+    def __init__(self, iFile, minConf, sep="\t"):
         """
         :param iFile: input file name or path
         :type iFile: str
@@ -221,7 +221,7 @@ class confidence:
         # sorted(k, key=lambda x: self._frequentPatterns[x], reverse=True)
         # return k
 
-    @deprecated("It is recommended to use 'mine()' instead of 'startMine()' for mining process. Starting from January 2025, 'startMine()' will be completely terminated.")
+    @deprecated("It is recommended to use 'mine()' instead of 'mine()' for mining process. Starting from January 2025, 'mine()' will be completely terminated.")
     def startMine(self):
         """
         Association rule mining process will start from here
@@ -347,8 +347,8 @@ if __name__ == "__main__":
         if len(_ab._sys.argv) == 5:
             _ap = confidence(_ab._sys.argv[1], float(_ab._sys.argv[3]), _ab._sys.argv[4])
         if len(_ab._sys.argv) == 4:
-            _ap = confidence(_ab._sys.argv[1], _ab._sys.argv[3])
-        _ap.startMine()
+            _ap = confidence(_ab._sys.argv[1], float(_ab._sys.argv[3]))
+        _ap.mine()
         _ap.mine()
         print("Total number of Association Rules:", len(_ap.getAssociationRules()))
         _ap.save(_ab._sys.argv[2])

@@ -131,6 +131,11 @@ class efimParallel(_ab._utilityPatterns):
 
     def __init__(self, iFile, minUtil, sep="\t", threads=1):
         super().__init__(iFile, minUtil, sep)
+        self.runtime = None
+        self.oFile = None
+        self.start = None
+        self.memoryUSS = None
+        self.memoryRSS = None
         self.inputFile = iFile
         self.minUtil = minUtil
         self.sep = sep
@@ -177,7 +182,7 @@ class efimParallel(_ab._utilityPatterns):
         twu = {k: v for k, v in twu.items() if v >= self.minUtil}
 
         # Sort TWU items by utility
-        twu = {k: v for k, v in sorted(twu.items(), key=lambda item: item[1], reverse=True)}
+        twu = {k: v for k, v in sorted(twu.items(), key=lambda item_: item_[1], reverse=True)}
 
         strToInt = {}
         t = len(twu)
@@ -243,7 +248,7 @@ class efimParallel(_ab._utilityPatterns):
 
         low = 0
         high = len(arr) - 1
-        mid = 0
+        #mid = 0
 
         while low <= high:
             mid = (high + low) // 2
@@ -292,7 +297,7 @@ class efimParallel(_ab._utilityPatterns):
         item = beta[-1]
 
         temp = [v for k, v in file_data.items() if item in k]
-        start = time.time()
+        #start = time.time()
 
         for v in temp:
             index = self._binarySearch(v[0], item)
@@ -349,7 +354,7 @@ class efimParallel(_ab._utilityPatterns):
         :type collections: list
         """
 
-        if (self.threads > 1):
+        if self.threads > 1:
             with Parallel(n_jobs=self.threads) as parallel:
                 while len(collections) > 0:
                     new_collections = []
@@ -384,7 +389,7 @@ class efimParallel(_ab._utilityPatterns):
                 collections = new_collections
 
 
-    @deprecated("It is recommended to use 'mine()' instead of 'startMine()' for mining process. Starting from January 2025, 'startMine()' will be completely terminated.")
+    @deprecated("It is recommended to use 'mine()' instead of 'mine()' for mining process. Starting from January 2025, 'mine()' will be completely terminated.")
     def startMine(self):
         """
         Start the EFIM algorithm.
@@ -509,7 +514,7 @@ if __name__ == "__main__":
 
     # sep = " "
     # f = efimParallel(inputFile, minUtil, sep, 1)
-    # f.startMine()
+    # f.mine()
     # f.mine()
     # print("# of patterns: " + str(len(f.getPatterns())))
     # print("Time taken: " + str(f.getRuntime()))
@@ -522,7 +527,7 @@ if __name__ == "__main__":
             _ap = efimParallel(_ab._sys.argv[1], int(_ab._sys.argv[3]), _ab._sys.argv[4])
         if len(_ab._sys.argv) == 4:    #takes "\t" as a separator
             _ap = efimParallel(_ab._sys.argv[1], int(_ab._sys.argv[3]))
-        _ap.startMine()
+        _ap.mine()
         _ap.mine()
         print("Total number of High Utility Patterns:", len(_ap.getPatterns()))
         _ap.save(_ab._sys.argv[2])
@@ -531,7 +536,7 @@ if __name__ == "__main__":
         print("Total ExecutionTime in seconds:", _ap.getRuntime())
     else:
         _ap = efimParallel('/Users/likhitha/Downloads/Utility_T10I4D100K.csv', 50000, '\t')
-        _ap.startMine()
+        _ap.mine()
         _ap.mine()
         print("Total number of High Utility Patterns:", len(_ap.getPatterns()))
         _ap.save('/Users/likhitha/Downloads/UPGrowth_output.txt')

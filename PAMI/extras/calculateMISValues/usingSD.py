@@ -37,7 +37,7 @@ import validators as _validators
 import statistics as _statistics
 from urllib.request import urlopen as _urlopen
 
-class usingSD():
+class usingSD:
     """
 
     :Description: This code is used to calculate multiple minimum support of items in the the given database. Output can be stored in file or as as dataframe.
@@ -75,6 +75,7 @@ class usingSD():
         self._iFile = iFile
         self._threshold = threshold
         self._sep = sep
+        self._oFile = str
 
     def _creatingItemSets(self) -> None:
         """
@@ -166,6 +167,6 @@ class usingSD():
             writer.write("%s \n" % patternsAndSupport)
 
 if __name__ == '__main__':
-    cd = usingSD(_sys.argv[1],_sys.argv[2],_sys.argv[3])
+    cd = usingSD(_sys.argv[1],int(_sys.argv[2]),_sys.argv[3])
     cd.calculateMIS()
     cd.save(_sys.argv[4])

@@ -36,12 +36,12 @@ Copyright (C)  2021 Rage Uday Kiran
      along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
 
-from typing import Tuple, List, Union
+#from typing import Tuple, List, Union
 import pandas as pd
 import numpy as np
-import random
+#import random
 import sys
-import os
+#import os
 
 class generateSpatioTemporal:
     """
@@ -98,11 +98,12 @@ class generateSpatioTemporal:
 
     """
 
-    def getPoint(self, x1, y1, x2, y2):
-        return (np.random.randint(x1, x2), np.random.randint(y1, y2))
+    @staticmethod
+    def getPoint(x1, y1, x2, y2):
+        return np.random.randint(x1, x2), np.random.randint(y1, y2)
 
-    def __init__(self, numOfTransactions: int, avgLenOfTransactions: int, 
-                 numItems: int, outputFile: str, x1, y1, x2, y2, percentage: int=50,
+    def __init__(self, numOfTransactions: int, avgLenOfTransactions: float,
+                 numItems: int, outputFile: str, x1, y1, x2, y2, percentage: float=50.0,
                  sep: str='\t', typeOfFile: str="Database") -> None:
         
         """
@@ -140,6 +141,7 @@ class generateSpatioTemporal:
         
         """
 
+        self.df = None
         self.numOfTransactions = numOfTransactions
         self.avgLenOfTransactions = avgLenOfTransactions
         self.numItems = numItems
@@ -185,7 +187,8 @@ class generateSpatioTemporal:
         """
         return self.df
     
-    def performCoinFlip(self, probability: float) -> bool:
+    @staticmethod
+    def performCoinFlip(probability: float) -> bool:
         """
         Perform a coin flip with the given probability.
         :param probability: probability to perform coin flip
@@ -197,13 +200,14 @@ class generateSpatioTemporal:
         return result == 1
 
 
-    def tuning(self, array, sumRes) -> list:
+    @staticmethod
+    def tuning(array, sumRes):
         """
         Tune the array so that the sum of the values is equal to sumRes
 
-        :param array: list of values
+        :param array: numpy.ndarray of values
 
-        :type array: list
+        :type array: numpy.ndarray
 
         :param sumRes: the sum of the values in the array to be tuned
 
@@ -211,7 +215,7 @@ class generateSpatioTemporal:
 
         :return: list of values with the tuned values and the sum of the values in the array to be tuned and sumRes is equal to sumRes
 
-        :rtype: list
+        :rtype: numpy array
         """
 
         while np.sum(array) != sumRes:
@@ -222,26 +226,26 @@ class generateSpatioTemporal:
                 array[randIndex] -= 1
             # if sum is too small, increase the smallest value
             else:
-                minIndex = np.argmin(array)
+                #minIndex = np.argmin(array)
                 array[randIndex] += 1
         return array
         
 
-    def generateArray(self, nums, avg, maxItems, sumRes) -> list:
+    def generateArray(self, nums, maxItems, sumRes):
         """
         Generate a random array of length n whose values average to m
 
         :param nums: number of values
 
-        :type nums: list
-
-        :param avg: average value
-
-        :type avg: float
+        :type nums: int
 
         :param maxItems: maximum value
 
         :type maxItems: int
+
+        :param sumRes: Resultant sum
+
+        :type sumRes: int
 
         :return: random array
 
@@ -283,13 +287,13 @@ class generateSpatioTemporal:
         """
 
         lines = [i for i in range(self.numOfTransactions) if self.performCoinFlip(self.percentage)]
-        values = self.generateArray(len(lines), self.avgLenOfTransactions, self.numItems, self.avgLenOfTransactions * self.numOfTransactions)
+        values = self.generateArray(len(lines), self.numItems, int(self.avgLenOfTransactions * self.numOfTransactions))
         # print(values, sum(values), self.avgLenOfTransactions * self.numOfTransactions, sum(values)/self.numOfTransactions)
         # print(lines)
 
         form = list(zip(lines, values))
 
-        database = [None for i in range(self.numOfTransactions)]
+        database = [None for _ in range(self.numOfTransactions)]
 
         for i in range(len(form)):
             database[form[i][0]] = np.random.choice(range(1, self.numItems + 1), form[i][1], replace=False).tolist()
@@ -305,6 +309,10 @@ class generateSpatioTemporal:
     def save(self, sep, filename) -> None:
         """
         Save the transactional database to a file
+
+        :param sep: separator
+
+        :type sep: str
 
         :param filename: name of the file
 
@@ -325,20 +333,20 @@ class generateSpatioTemporal:
 
 
 if __name__ == '__main__':
-    numOfTransactions = 100
-    numItems = 20
-    avgTransactionLength = 6
+    numOfTransactions_ = 100
+    numItems_ = 20
+    avgTransactionLength_ = 6
     outFileName = '1.txt'
-    sep = '\t'
+    sep_ = '\t'
 
-    temporalDB = generateSpatioTemporal(numOfTransactions, avgTransactionLength, numItems, outFileName,1,1,10,10)
+    temporalDB = generateSpatioTemporal(numOfTransactions_, avgTransactionLength_, numItems_, outFileName,1,1,10,10)
 
     temporalDB.createTemporalFile()
-    temporalDB.save(sep, outFileName)
+    temporalDB.save(sep_, outFileName)
     print(temporalDB.getTransactions())
 
 
 
-    obj = generateSpatioTemporal(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], sys.argv[6], sys.argv[7], sys.argv[8])
+    obj = generateSpatioTemporal(int(sys.argv[1]), int(sys.argv[2]), int(sys.argv[3]), sys.argv[4], int(sys.argv[5]), int(sys.argv[6]), int(sys.argv[7]), int(sys.argv[8]))
     obj.createTemporalFile()
-    obj.getFileName(sys.argv[9])
+    obj.getFileName()

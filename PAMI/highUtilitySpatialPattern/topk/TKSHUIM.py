@@ -205,6 +205,7 @@ class Dataset:
     """
     transactions = []
     maxItem = 0
+
     
     def __init__(self, datasetpath, sep):
         self.strToint = {}
@@ -226,17 +227,18 @@ class Dataset:
         :return : Transaction.
         :rtype: int
         """
+        pmuString = None
         trans_list = line.strip().split(':')
         transactionUtility = int(trans_list[1])
         itemsString = trans_list[0].strip().split(self.sep)
         utilityString = trans_list[2].strip().split(self.sep)
-        if (len(trans_list) == 4):
+        if len(trans_list) == 4:
             pmuString = trans_list[3].strip().split(self.sep)
         items = []
         utilities = []
         pmus = []
         for idx, item in enumerate(itemsString):
-            if (self.strToint).get(item) is None:
+            if self.strToint.get(item) is None:
                 self.strToint[item] = self.cnt
                 self.intTostr[self.cnt] = item
                 self.cnt += 1
@@ -245,7 +247,7 @@ class Dataset:
                 self.maxItem = item_int
             items.append(item_int)
             utilities.append(int(utilityString[idx]))
-            if (len(trans_list) == 4):
+            if len(trans_list) == 4:
                 pmus.append(int(pmuString[idx]))
         return Transaction(items, utilities, transactionUtility, pmus)
 
@@ -429,11 +431,12 @@ class TKSHUIM(utilityPatterns):
     memoryUSS = float()
     memoryRSS = float()
     heapList = []
+    dataset = None
 
     def __init__(self, iFile, nFile, k, sep="\t"):
         super().__init__(iFile, nFile, k, sep)
 
-    @deprecated("It is recommended to use 'mine()' instead of 'startMine()' for mining process. Starting from January 2025, 'startMine()' will be completely terminated.")
+    @deprecated("It is recommended to use 'mine()' instead of 'mine()' for mining process. Starting from January 2025, 'mine()' will be completely terminated.")
     def startMine(self):
         """
         Main function of the program.
@@ -791,9 +794,9 @@ class TKSHUIM(utilityPatterns):
                 pmu = transaction.getUtilities()[idx]
                 if item in self.Neighbours:
                     neighbors = self.Neighbours[item]
-                    for idx, item in enumerate(transaction.getItems()):
-                        if item in neighbors:
-                            pmu += transaction.getUtilities()[idx]
+                    for idn, item1 in enumerate(transaction.getItems()):
+                        if item1 in neighbors:
+                            pmu += transaction.getUtilities()[idn]
                 if item in self.utilityBinArrayLU:
                     # self.utilityBinArrayLU[item] += transaction.getPmus()[idx]
                     self.utilityBinArrayLU[item] += pmu
@@ -919,7 +922,7 @@ def main():
     k = 1000
     seperator = ' ' 
     obj = TKSHUIM(iFile=inputFile, nFile=neighborFile, k=k,  sep=seperator)    #initialize
-    obj.startMine()
+    obj.mine()
     obj.mine()
     obj.printResults()
     print(obj.getPatterns())
@@ -932,7 +935,7 @@ if __name__ == '__main__':
     #         _ap = TKSHUIM(sys.argv[1], sys.argv[3], int(sys.argv[4]), sys.argv[5])
     #     if len(sys.argv) == 5:
     #         _ap = TKSHUIM(sys.argv[1], sys.argv[3], int(sys.argv[4]))
-    #     _ap.startMine()
+    #     _ap.mine()
     #     _ap.mine()
     #     print("Top K Spatial  High Utility Patterns:", len(_ap.getPatterns()))
     #     _ap.save(sys.argv[2])
@@ -943,7 +946,7 @@ if __name__ == '__main__':
     #     for i in [1000, 5000]:
     #         _ap = TKSHUIM('/Users/Likhitha/Downloads/mushroom_main_2000.txt',
     #                 '/Users/Likhitha/Downloads/mushroom_neighbors_2000.txt', i, ' ')
-    #         _ap.startMine()
+    #         _ap.mine()
     #         _ap.mine()
     #         print("Total number of Spatial High Utility Patterns:", len(_ap.getPatterns()))
     #         print("Total Memory in USS:", _ap.getMemoryUSS())

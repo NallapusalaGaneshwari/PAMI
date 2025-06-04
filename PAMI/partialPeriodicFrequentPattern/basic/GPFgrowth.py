@@ -57,6 +57,8 @@ __copyright__ = """
 
 """
 
+from abc import ABC
+
 import deprecated
 from PAMI.partialPeriodicFrequentPattern.basic.abstract import *
 
@@ -117,7 +119,7 @@ class _Node(object):
         return transaction[::-1], locs
 
 
-class GPFgrowth(partialPeriodicPatterns):
+class GPFgrowth(partialPeriodicPatterns, ABC):
     """
     **About this algorithm**
 
@@ -223,6 +225,11 @@ class GPFgrowth(partialPeriodicPatterns):
     _partialPeriodicPatterns__memoryUSS = float()
     _partialPeriodicPatterns__memoryRSS = float()
     __Database = []
+    _maxTS = None
+    __runTime = None
+    oFile = None
+
+
 
     def __convert(self, value):
         """
@@ -306,9 +313,8 @@ class GPFgrowth(partialPeriodicPatterns):
         :type arr: array
         :return: locs
         """
-        arr = list(arr)
-        arr.append(self._maxTS)
-        arr.append(0)
+        arr = list(arr) + [self._maxTS, 0]
+        arr = list(set(arr))
         arr = np.sort(arr)
         arr = np.diff(arr)
 
@@ -342,11 +348,12 @@ class GPFgrowth(partialPeriodicPatterns):
         """
 
 
-        items = {k: v for k, v in items.items() if len(v) >= self._partialPeriodicPatterns__minSup and self._ratioCalc(v) >= self._partialPeriodicPatterns__minPR}
+        items = {k: v for k, v in items.items() if len(v) >= self._partialPeriodicPatterns__minSup}
 
-        #tested ok
         for item, ts in items.items():
-            self._partialPeriodicPatterns__finalPatterns[tuple([item])] = [len(ts), self._ratioCalc(ts)]
+            ratio = self._ratioCalc(ts)
+            if ratio >= self._partialPeriodicPatterns__minPR:
+                self._partialPeriodicPatterns__finalPatterns[tuple([item])] = [len(ts), ratio]
 
         root = _Node([], None, None)
         itemNodes = {}
@@ -364,7 +371,6 @@ class GPFgrowth(partialPeriodicPatterns):
 
         return root, itemNodes
 
-    
     def _recursive(self, root, itemNode):
         """
         This method recursively constructs a pattern tree from the given root node,
@@ -400,24 +406,23 @@ class GPFgrowth(partialPeriodicPatterns):
                 else:
                     transactions[tuple(transaction)] = locs
 
-                for item in transaction:
-                    if item in itemLocs:
-                        itemLocs[item] += locs
+                for item1 in transaction:
+                    if item1 in itemLocs:
+                        itemLocs[item1] += locs
                     else:
-                        itemLocs[item] = list(locs)
+                        itemLocs[item1] = list(locs)
 
             # Precompute getMaxPer results for itemLocs
             # maxPerResults = {item: self._getMaxPer(itemLocs[item], maxTS) for item in itemLocs if len(itemLocs[item]) >= minSup}
             maxPerResults = {item: self._ratioCalc(itemLocs[item]) for item in itemLocs if len(itemLocs[item]) >= self._partialPeriodicPatterns__minSup}
 
+            for item3 in maxPerResults:
+                if maxPerResults[item3] >= self._partialPeriodicPatterns__minPR:
+                    self._partialPeriodicPatterns__finalPatterns[tuple(newRoot.item3 + [item3])] = [len(itemLocs[item3]), maxPerResults[item3]]
 
             # Filter itemLocs based on minSup and maxPer
-            itemLocs = {k: len(v) for k, v in itemLocs.items() if k in maxPerResults and maxPerResults[k] >= self._partialPeriodicPatterns__minPR}
+            itemLocs = {k: len(v) for k, v in itemLocs.items() if len(v) >= self._partialPeriodicPatterns__minSup}
 
-            # Iterate over filtered itemLocs
-            for item in itemLocs:
-                self._partialPeriodicPatterns__finalPatterns[tuple(newRoot.item + [item])] = [itemLocs[item], maxPerResults[item]]
-            
             if not itemLocs:
                 continue
 
@@ -428,23 +433,20 @@ class GPFgrowth(partialPeriodicPatterns):
                 if len(transaction) < 1:
                     continue
                 currNode = newRoot
-                for item in transaction:
-                    currNode = currNode.addChild(item, locs)
-                    if item in newItemNodes:
-                        newItemNodes[item].add(currNode)
+                for item2 in transaction:
+                    currNode = currNode.addChild(item2, locs)
+                    if item2 in newItemNodes:
+                        newItemNodes[item2].add(currNode)
                     else:
-                        newItemNodes[item] = set([currNode])
+                        newItemNodes[item2] = set([currNode])
 
             self._recursive(newRoot, newItemNodes)
 
-
     def mine(self):
-        self.__inputFile = self._partialPeriodicPatterns__iFile
         self._partialPeriodicPatterns__startTime = time.time()
         self._partialPeriodicPatterns__finalPatterns = {}
         self.__creatingItemSets()
         
-        # self.minPR = self.convert(self.minPR)
         self._partialPeriodicPatterns__minPR = float(self._partialPeriodicPatterns__minPR)
         
         self._maxTS = 0
@@ -581,13 +583,5 @@ if __name__ == '__main__':
         print("Total Memory in RSS", ap.getMemoryRSS())
         print("Total ExecutionTime in ms:", ap.getRuntime())
     else:
-        for i in [350]:
-            _ap = GPFgrowth('/Users/tarunsreepada/Downloads/Temporal_T10I4D100K.csv', i, 300, 0.7, '\t')
-            _ap.mine()
-            print("Total number of Maximal Partial Periodic Patterns:", len(_ap.getPatterns()))
-            _ap.save('/Users/tarunsreepada/Downloads/output1.txt')
-            print(_ap.getPatternsAsDataFrame())
-            print("Total Memory in USS:", _ap.getMemoryUSS())
-            print("Total Memory in RSS", _ap.getMemoryRSS())
-            print("Total ExecutionTime in ms:", _ap.getRuntime())
+
         print("Error! The number of input parameters do not match the total number of parameters provided")

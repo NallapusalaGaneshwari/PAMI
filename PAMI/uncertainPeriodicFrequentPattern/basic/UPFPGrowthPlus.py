@@ -378,12 +378,12 @@ class _Tree(object):
         :type periodic : list
         """
         global _minSup
-        for i in sorted(self.summaries, key=lambda x: (self.info.get(x)[0])):
+        for i in sorted(self.summaries, key=lambda x_: (self.info.get(x_)[0])):
             pattern = prefix[:]
             pattern.append(i)
             s = 0
-            secProb = []
-            kk = int()
+            #secProb = []
+            #kk = int()
             for x in self.summaries[i]:
                 if x.k <= 2:
                     s += x.probability
@@ -402,6 +402,8 @@ class _Tree(object):
                 if len(patterns) > 0:
                     conditionalTree.generatePatterns(pattern, periodic)
             self.removeNode(i)
+
+global first, last
 
 class UPFPGrowthPlus(_ab._periodicFrequentPatterns):
     """
@@ -484,7 +486,7 @@ class UPFPGrowthPlus(_ab._periodicFrequentPatterns):
 
     :Methods:
 
-        startMine()
+        mine()
             Mining process will start from here
         getPatterns()
             Complete set of patterns will be retrieved with this function
@@ -633,7 +635,7 @@ class UPFPGrowthPlus(_ab._periodicFrequentPatterns):
                     self._Database.append(tr)
             else:
                 try:
-                    count = 0
+                    #count = 0
                     with open(self._iFile, 'r') as f:
                         for line in f:
                             line = line.strip()
@@ -653,11 +655,12 @@ class UPFPGrowthPlus(_ab._periodicFrequentPatterns):
                 except IOError:
                     print("File Not Found")
 
+
     def _PeriodicFrequentOneItems(self):
         """
         Takes the transactions and calculates the support of each item in the dataset and assign the ranks to the items by decreasing support and returns the frequent items list
         """
-        global first, last
+
         mapSupport = {}
         for i in self._Database:
             n = int(i[0])
@@ -783,7 +786,7 @@ class UPFPGrowthPlus(_ab._periodicFrequentPatterns):
         #print("Total false patterns generated:", len(self._periodic) - count)
 
     @deprecated(
-         "It is recommended to use 'mine()' instead of 'startMine()' for mining process. Starting from January 2025, 'startMine()' will be completely terminated.")
+         "It is recommended to use 'mine()' instead of 'mine()' for mining process. Starting from January 2025, 'mine()' will be completely terminated.")
     def startMine(self):
         """
         Main method where the patterns are mined by constructing tree and remove the false patterns by counting the original support of a patterns
@@ -905,7 +908,7 @@ if __name__ == "__main__":
             _ap = UPFPGrowthPlus(_ab._sys.argv[1], _ab._sys.argv[3], _ab._sys.argv[4], _ab._sys.argv[5])
         if len(_ab._sys.argv) == 5:
             _ap = UPFPGrowthPlus(_ab._sys.argv[1], _ab._sys.argv[3], _ab._sys.argv[4])
-        _ap.startMine()
+        _ap.mine()
         _ap.mine()
         _Patterns = _ap.getPatterns()
         print("Total number of Patterns:", len(_Patterns))

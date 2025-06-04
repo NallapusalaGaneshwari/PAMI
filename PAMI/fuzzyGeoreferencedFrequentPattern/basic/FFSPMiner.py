@@ -280,6 +280,7 @@ class FFSPMiner(_ab._fuzzySpatialFrequentPatterns):
 
     def __init__(self, iFile: str, nFile: str, minSup: float, sep: str="\t") -> None:
         super().__init__(iFile, nFile, minSup, sep)
+        self.oFile = None
         self._mapItemNeighbours = {}
         self._startTime = 0
         self._endTime = 0
@@ -416,7 +417,7 @@ class FFSPMiner(_ab._fuzzySpatialFrequentPatterns):
                     print("File Not Found")
                     quit()
 
-    @deprecated("It is recommended to use 'mine()' instead of 'startMine()' for mining process. Starting from January 2025, 'startMine()' will be completely terminated.")
+    @deprecated("It is recommended to use 'mine()' instead of 'mine()' for mining process. Starting from January 2025, 'mine()' will be completely terminated.")
     def startMine(self) -> None:
         """
         Frequent pattern mining process will start from here
@@ -600,17 +601,17 @@ class FFSPMiner(_ab._fuzzySpatialFrequentPatterns):
         :return: element tid as given
         :rtype: element if exist or None
         """
-        List = uList.elements
+        List_ = uList.elements
         first = 0
-        last = len(List) - 1
+        last = len(List_) - 1
         while first <= last:
             mid = (first + last) >> 1
-            if List[mid].tid < tid:
+            if List_[mid].tid < tid:
                 first = mid + 1
-            elif List[mid].tid > tid:
+            elif List_[mid].tid > tid:
                 last = mid - 1
             else:
-                return List[mid]
+                return List_[mid]
         return None
 
     def _WriteOut(self, prefix: List, prefixLen: int, item: int, sumIUtil: float) -> None:
@@ -690,7 +691,7 @@ if __name__ == "__main__":
             _ap = FFSPMiner(_ab._sys.argv[1], _ab._sys.argv[3], _ab._sys.argv[4], _ab._sys.argv[5])
         if len(_ab._sys.argv) == 5:
             _ap = FFSPMiner(_ab._sys.argv[1], _ab._sys.argv[3], _ab._sys.argv[4])
-        _ap.startMine()
+        _ap.mine()
         _ap.mine()
         print("Total number of Spatial Fuzzy Frequent  Patterns:", len(_ap.getPatterns()))
         _ap.save(_ab._sys.argv[2])
@@ -699,7 +700,7 @@ if __name__ == "__main__":
         print("Total ExecutionTime in seconds:", _ap.getRuntime())
     else:
         _ap = FFSPMiner('sample.txt', 'nei.txt', 1, ' ')
-        _ap.startMine()
+        _ap.mine()
         _ap.mine()
         print("Total number of Fuzzy-Frequent Patterns:", len(_ap.getPatterns()))
         _ap.save('output.txt')

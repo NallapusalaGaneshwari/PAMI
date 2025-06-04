@@ -8,7 +8,7 @@
 #
 #     obj = alg.EPCPGrowth(iFile, minSup, minAllCOnf, maxPer, maxPerAllConf)
 #
-#     obj.startMine()
+#     obj.mine()
 #
 #     periodicCorrelatedPatterns = obj.getPatterns()
 #
@@ -179,6 +179,8 @@ class _Tree(object):
 
         :param alpha: To represent a Node in the tree
         :type alpha: Node
+        :param pattern: pattern
+        :type pattern: list
         :return: A tuple consisting of finalPatterns, conditional pattern base and information
         """
         finalPatterns = []
@@ -239,6 +241,7 @@ class _Tree(object):
         To calculate the periodicity and support
 
         :param timeStamps: Timestamps of an item set
+        :param pattern: pattern
         :return: support, periodicity
         """
 
@@ -273,10 +276,12 @@ class _Tree(object):
         :type conditionalPatterns: list
         :param conditionalTimeStamps: Represents the timestamps of a conditional patterns of a node
         :type conditionalTimeStamps: list
+        :param pattern: pattern
+        :type pattern: list
         :returns: Returns conditional transactions by removing non-periodic and non-frequent items
         """
         global _maxPer, _minSup
-        temp = pattern
+        #temp = pattern
         pat = []
         timeStamps = []
         data1 = {}
@@ -384,7 +389,7 @@ class EPCPGrowth(_ab._periodicCorrelatedPatterns):
 
     :Methods:
 
-        startMine()
+        mine()
             Mining process will start from here
         getPatterns()
             Complete set of patterns will be retrieved with this function
@@ -425,7 +430,7 @@ class EPCPGrowth(_ab._periodicCorrelatedPatterns):
 
         obj = alg.EPCPGrowth(iFile, minSup, minAllCOnf, maxPer, maxPerAllConf)
 
-        obj.startMine()
+        obj.mine()
 
         periodicCorrelatedPatterns = obj.getPatterns()
 
@@ -529,7 +534,7 @@ class EPCPGrowth(_ab._periodicCorrelatedPatterns):
         for key in data:
             data[key][0] = max(data[key][0], abs(len(self._Database) - data[key][1]))
         data = {k: [v[2], v[0], 1, 1] for k, v in data.items() if v[0] <= self._maxPer and v[2] >= self._minSup}
-        pfList = [k for k, v in sorted(data.items(), key=lambda x: (x[1][0], x[0]), reverse=True)]
+        pfList = [k for k, v in sorted(data.items(), key=lambda x_: (x_[1][0], x_[0]), reverse=True)]
         self._rank = dict([(index, item) for (item, index) in enumerate(pfList)])
         for x, y in self._rank.items():
             _frequentList[y] = data[x]
@@ -607,6 +612,45 @@ class EPCPGrowth(_ab._periodicCorrelatedPatterns):
         return value
 
     def startMine(self) -> None:
+        """
+        Mining process will start from this function
+        """
+
+        global _minSup, _maxPer, _minAllConf, _maxPerAllConf, _lno
+        self._startTime = _ab._time.time()
+        if self._iFile is None:
+            raise Exception("Please enter the file path or file name:")
+        if self._minSup is None:
+            raise Exception("Please enter the Minimum Support")
+        self._creatingItemSets()
+        self._minSup = self._convert(self._minSup)
+        self._minAllConf = float(self._minAllConf)
+        self._maxPer = self._convert(self._maxPer)
+        self._maxPerAllConf = float(self._maxPerAllConf)
+        _minSup, _minAllConf, _maxPer, _maxPerAllConf, _lno = self._minSup, self._minAllConf,  self._maxPer, self._maxPerAllConf, len(self._Database)
+        #print(_minSup, _minAllConf, _maxPer, _maxPerAllConf)
+        if self._minSup > len(self._Database):
+            raise Exception("Please enter the minSup in range between 0 to 1")
+        generatedItems, pfList = self._periodicFrequentOneItem()
+        updatedDatabases = self._updateDatabases(generatedItems)
+        for x, y in self._rank.items():
+            self._rankedUp[y] = x
+        info = {self._rank[k]: v for k, v in generatedItems.items()}
+        Tree = self._buildTree(updatedDatabases, info)
+        patterns = Tree.generatePatterns([])
+        self._finalPatterns = {}
+        for i in patterns:
+            sample = self._savePeriodic(i[0])
+            self._finalPatterns[sample] = i[1]
+        self._endTime = _ab._time.time()
+        process = _ab._psutil.Process(_ab._os.getpid())
+        self._memoryUSS = float()
+        self._memoryRSS = float()
+        self._memoryUSS = process.memory_full_info().uss
+        self._memoryRSS = process.memory_info().rss
+        print("Correlated Periodic-Frequent patterns were generated successfully using EPCPGrowth algorithm ")
+
+    def mine(self) -> None:
         """
         Mining process will start from this function
         """
@@ -729,7 +773,7 @@ if __name__ == "__main__":
             _ap = EPCPGrowth(_ab._sys.argv[1], _ab._sys.argv[3], _ab._sys.argv[4], _ab._sys.argv[5], sys.argv[6], sys.argv[7])
         if len(_ab._sys.argv) == 7:
             _ap = EPCPGrowth(_ab._sys.argv[1], _ab._sys.argv[3], _ab._sys.argv[4], sys.argv[5], sys.argv[6])
-        _ap.startMine()
+        _ap.mine()
         print("Total number of Correlated Periodic-Frequent Patterns:", len(_ap.getPatterns()))
         _ap.save(_ab._sys.argv[2])
         print("Total Memory in USS:", _ap.getMemoryUSS())

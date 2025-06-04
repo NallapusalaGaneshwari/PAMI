@@ -1,5 +1,5 @@
 import random as _rd
-import sys as _sys
+#import sys as _sys
 
 
 class createSyntheticGeoreferentialUncertainTransaction:
@@ -54,7 +54,7 @@ class createSyntheticGeoreferentialUncertainTransaction:
             length = _rd.randint(1, self._avgTransactionLength + 20)
             st = str()
             st1 = str()
-            for i in range(length):
+            for _ in range(length):
                 rd = _rd.randint(0, len(items) - 1)
                 item = items[rd]
                 probability = _rd.uniform(0, 1)
@@ -65,7 +65,7 @@ class createSyntheticGeoreferentialUncertainTransaction:
             writer.write("%s \n" % st1)
             
 if __name__ == "__main__":
-    _ap = str()
+    #_ap = str()
     _ap = createSyntheticGeoreferentialUncertainTransaction(100000, 870, 10)
     _ap.createGeoreferentialUncertainTransactionalDatabase("T10_geo_un.txt")
 else:

@@ -6,7 +6,7 @@
 #
 #             obj = alg.SPPGrowthDump(iFile, minSup, maxPer, maxLa)
 #
-#             obj.startMine()
+#             obj.mine()
 #
 #             Patterns = obj.getPatterns()
 #
@@ -50,8 +50,8 @@ __copyright__ = """
 
 """
 
-from PAMI.stableperiodicFrequentPattern.basic import abstract as _ab
-import pandas as pd
+from PAMI.stablePeriodicFrequentPattern.basic import abstract as _ab
+#import pandas as pd
 from deprecated import deprecated
 
 from urllib.request import urlopen
@@ -263,7 +263,7 @@ class _Tree:
                     yield q
             self.removeNode(i)
 
-class SPPGrowth():
+class SPPGrowth:
     _startTime = float()
     _endTime = float()
     _minSup = str()
@@ -431,7 +431,7 @@ class SPPGrowth():
                 value = int(value)
         return value
 
-    @deprecated("It is recommended to use mine() instead of startMine() for mining process")
+    @deprecated("It is recommended to use mine() instead of mine() for mining process")
     def startMine(self):
         """
         Mining process will start from this function
@@ -444,7 +444,7 @@ class SPPGrowth():
         Mining process will start from this function
         """
 
-        global _minSup, _maxPer, _lno, _maxLa
+        global _minSup, _maxPer, _maxLa # _lno,
         self._startTime = time.time()
         if self._iFile is None:
             raise Exception("Please enter the file path or file name:")
@@ -543,12 +543,12 @@ class SPPGrowth():
 
 if __name__ == "__main__":
     _ap = str()
-    if len(sys.argv) == 5 or len(sys.argv) == 6:
+    if len(sys.argv) == 6 or len(sys.argv) == 7:
+        if len(sys.argv) == 7:
+            _ap = SPPGrowth(sys.argv[1], sys.argv[3], sys.argv[4], sys.argv[5],sys.argv[6])
         if len(sys.argv) == 6:
-            _ap = SPPGrowth(sys.argv[1], sys.argv[3], sys.argv[4], sys.argv[5])
-        if len(sys.argv) == 5:
-            _ap = SPPGrowth(sys.argv[1], sys.argv[3], sys.argv[4])
-        _ap.startMine()
+            _ap = SPPGrowth(sys.argv[1], sys.argv[3], sys.argv[4],sys.argv[5])
+        _ap.mine()
         _ap.mine()
         _Patterns = _ap.getPatterns()
         print("Total number of Patterns:", len(_Patterns))
@@ -562,7 +562,7 @@ if __name__ == "__main__":
     else:
         '''ap = topk('https://www.u-aizu.ac.jp/~udayrage/datasets/temporalDatabases/temporal_retail.csv', 0.001, 0.005, 0.004)
         #ap = topk('/Users/likhitha/Downloads/contextPrefixSpan.txt', 3, 6, 2, ' ')
-        ap.startMine()
+        ap.mine()
         Patterns = ap.getPatterns()
         print("Total number of Frequent Patterns:", len(Patterns))
         ap.save('/Users/Likhitha/Downloads/output')

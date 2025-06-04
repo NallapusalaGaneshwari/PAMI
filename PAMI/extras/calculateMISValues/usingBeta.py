@@ -32,12 +32,15 @@ Copyright (C)  2021 Rage Uday Kiran
      You should have received a copy of the GNU General Public License
      along with this program.  If not, see <https://www.gnu.org/licenses/>.
 """
-import sys as _sys
+
+import sys
+#import sys as _sys
+from typing import Union
 import pandas as _pd
 import validators as _validators
 from urllib.request import urlopen as _urlopen
 
-class usingBeta():
+class usingBeta:
     """
 
     :Description: This code is used to calculate multiple minimum support of items in the the given database. Output can be stored in file or as as dataframe.
@@ -46,7 +49,7 @@ class usingBeta():
                    Name of the Input file to get the patterns as DataFrame
     :param  beta: str :
                    Name of the output file to store complete set of frequent patterns
-    :param  threshold: int :
+    :param  LS: int :
                    The user can specify threshold either in count or proportion of database size. If the program detects the data type of threshold is integer, then it treats threshold is expressed in count.
     :param  sep: str :
                    This variable is used to distinguish items from one another in a transaction. The default seperator is tab space. However, the users can override their default separator.
@@ -66,15 +69,16 @@ class usingBeta():
     _iFile: str = ' '
     _beta: int = int()
     _sep: str = str()
-    _threshold: int = int()
+    _LS: int = int()
     _finalPatterns: dict = {}
 
-    def __init__(self, iFile: str, beta: int, threshold: int, sep: str):
+    def __init__(self, iFile: Union[str, _pd.DataFrame], beta: int, LS: int, sep: str="\t"):
         self._iFile = iFile
         self._beta = beta
-        self._threshold = threshold
+        self._LS = LS
         self._sep = sep
         self._lno = 0
+        self._oFile = str
 
     def _creatingItemSets(self) -> None:
         """
@@ -83,9 +87,9 @@ class usingBeta():
         self._Database = []
         self._mapSupport = {}
         if isinstance(self._iFile, _pd.DataFrame):
-            if self._iFile.empty:
+            if not self._iFile:
                 print("its empty..")
-            i = self._iFile.columns.values.tolist()
+            i = self._iFile.columns.tolist()
             if 'Transactions' in i:
                 self._Database = self._iFile['Transactions'].tolist()
 
@@ -109,7 +113,7 @@ class usingBeta():
                 except IOError:
                     print("File Not Found")
 
-    def _creatingFrequentItems(self) -> tuple:
+    def _creatingFrequentItems(self):
         """
         This function creates frequent items from _database.
         :return: frequentTidData that stores frequent items and their tid list.
@@ -131,9 +135,9 @@ class usingBeta():
             self._creatingItemSets()
             frequentItems = self._creatingFrequentItems()
             for x, y in frequentItems.items():
-              #self._finalPatterns[x] = min([y, self._threshold])
-                if y < self._threshold:
-                    self._finalPatterns[x] = self._threshold
+              #self._finalPatterns[x] = min([y, self._LS])
+                if y < self._LS:
+                    self._finalPatterns[x] = self._LS
                 else:
                     self._finalPatterns[x] = y
 
@@ -167,6 +171,6 @@ class usingBeta():
 
 
 if __name__ == '__main__':
-  cd = usingBeta(sys.argv[1], sys.argv[3], sys.argv[4], sys.argv[5])
+  cd = usingBeta(sys.argv[1], int(sys.argv[3]), int(sys.argv[4]), sys.argv[5])
   cd.calculateMIS()
   cd.save(sys.argv[2])

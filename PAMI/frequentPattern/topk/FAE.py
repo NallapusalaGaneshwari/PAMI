@@ -226,7 +226,7 @@ class FAE(_ab._frequentPatterns):
         else:
             prefix = prefix + suffix
         val = len(tidSetI)
-        sample = str()
+        #sample = str()
         # for i in prefix:
         #     sample = sample + i + "\t"
         sample = "\t".join(prefix)
@@ -236,7 +236,7 @@ class FAE(_ab._frequentPatterns):
                 self._finalPatterns = {k: v for k, v in sorted(self._finalPatterns.items(), key=lambda item: item[1], reverse=True)}
                 self._minimum = min([i for i in self._finalPatterns.values()])
         else:
-            for x, y in sorted(self._finalPatterns.items(), key=lambda x: x[1]):
+            for x, y in sorted(self._finalPatterns.items(), key=lambda x_: x_[1]):
                 if val > y:
                     del self._finalPatterns[x]
                     self._finalPatterns[sample] = val
@@ -301,7 +301,7 @@ class FAE(_ab._frequentPatterns):
                 value = int(value)
         return value
 
-    @deprecated("It is recommended to use 'mine()' instead of 'startMine()' for mining process. Starting from January 2025, 'startMine()' will be completely terminated.")
+    @deprecated("It is recommended to use 'mine()' instead of 'mine()' for mining process. Starting from January 2025, 'mine()' will be completely terminated.")
     def startMine(self):
         """
         TopK Frequent pattern mining process will start from here
@@ -433,7 +433,7 @@ if __name__ == "__main__":
             _ap = FAE(_ab._sys.argv[1], _ab._sys.argv[3], _ab._sys.argv[4])
         if len(_ab._sys.argv) == 4:
             _ap = FAE(_ab._sys.argv[1], _ab._sys.argv[3])
-        _ap.startMine()
+        _ap.mine()
         _ap.mine()
         print("Top K Frequent Patterns:", len(_ap.getPatterns()))
         _ap.save(_ab._sys.argv[2])

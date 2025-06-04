@@ -204,7 +204,7 @@ class ECLAT(_ab._frequentPatterns):
                 value = int(value)
         return value
 
-    @deprecated("It is recommended to use 'mine()' instead of 'startMine()' for mining process. Starting from January 2025, 'startMine()' will be completely terminated.")
+    @deprecated("It is recommended to use 'mine()' instead of 'mine()' for mining process. Starting from January 2025, 'mine()' will be completely terminated.")
     def startMine(self) -> None:
         """
         Frequent pattern mining process will start from here
@@ -276,7 +276,7 @@ class ECLAT(_ab._frequentPatterns):
             index += 1
         
         items = {tuple([k]): set(v) for k, v in items.items() if len(v) >= self._minSup}
-        items = {k: v for k, v in sorted(items.items(), key=lambda item: len(item[1]), reverse=False)}
+        items = {k: v for k, v in sorted(items.items(), key=lambda item_: len(item_[1]), reverse=False)}
         for k, v in items.items():
             self._finalPatterns[k] = len(v)
 
@@ -355,6 +355,8 @@ class ECLAT(_ab._frequentPatterns):
 
         :param outFile: name of the output file
         :type outFile: csvfile
+        :param seperator: variable to store separator value
+        :type seperator: string
         :return: None
         """
 
@@ -394,7 +396,7 @@ if __name__ == "__main__":
             _ap = ECLAT(_ab._sys.argv[1], _ab._sys.argv[3], _ab._sys.argv[4])
         if len(_ab._sys.argv) == 4:
             _ap = ECLAT(_ab._sys.argv[1], _ab._sys.argv[3])
-        _ap.startMine()
+        _ap.mine()
         _ap.mine()
         print("Total number of Frequent Patterns:", len(_ap.getPatterns()))
         _ap.save(_ab._sys.argv[2])

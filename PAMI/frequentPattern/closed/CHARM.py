@@ -359,7 +359,7 @@ class CHARM(_ab._frequentPatterns):
                     itemSets.insert(j, None)
                     tidSets.insert(j, None)
                     itemSetx.append(itemY)
-                elif len(tidSetX) < len(tidSetY) and len(y) == len(tidSetX):
+                elif len(tidSetY) > len(tidSetX) == len(y):
                     itemSetx.append(itemY)
                 elif len(tidSetX) > len(tidSetY) and len(y) == len(tidSetY):
                     itemSets.insert(j, None)
@@ -374,7 +374,7 @@ class CHARM(_ab._frequentPatterns):
                 self._processEquivalenceClass(newPrefix, classItemSets, classTidSets)
                 self._save(prefix, list(set(itemSetx)), tidSetX)
 
-    @deprecated("It is recommended to use 'mine()' instead of 'startMine()' for mining process. Starting from January 2025, 'startMine()' will be completely terminated.")
+    @deprecated("It is recommended to use 'mine()' instead of 'mine()' for mining process. Starting from January 2025, 'mine()' will be completely terminated.")
     def startMine(self):
         """
         Mining process will start from here by extracting the frequent patterns from the database. It performs prefix
@@ -410,7 +410,7 @@ class CHARM(_ab._frequentPatterns):
                 if len(tidSetx) == len(tidSetY) and len(y1) == len(tidSetx):
                     _plist.insert(j, None)
                     itemSetx.append(itemY)
-                elif len(tidSetx) < len(tidSetY) and len(y1) == len(tidSetx):
+                elif len(tidSetY) > len(tidSetx) == len(y1):
                     itemSetx.append(itemY)
                 elif len(tidSetx) > len(tidSetY) and len(y1) == len(tidSetY):
                     _plist.insert(j, None)
@@ -524,7 +524,7 @@ if __name__ == "__main__":
             _ap = CHARM(_ab._sys.argv[1], _ab._sys.argv[3], _ab._sys.argv[4])
         if len(_ab._sys.argv) == 4:
             _ap = CHARM(_ab._sys.argv[1], _ab._sys.argv[3])
-        _ap.startMine()
+        _ap.mine()
         _ap.mine()
         print("Total number of Closed Frequent Patterns:", len(_ap.getPatterns()))
         _ap.save(_ab._sys.argv[2])

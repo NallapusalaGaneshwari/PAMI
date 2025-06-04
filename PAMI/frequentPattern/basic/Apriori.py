@@ -153,7 +153,7 @@ class Apriori(_ab._frequentPatterns):
         """
         self._Database = []
         if isinstance(self._iFile, _ab._pd.DataFrame):
-            temp = []
+            #temp = []
             if self._iFile.empty:
                 print("its empty..")
             i = self._iFile.columns.values.tolist()
@@ -204,7 +204,7 @@ class Apriori(_ab._frequentPatterns):
                 value = int(value)
         return value
 
-    @deprecated("It is recommended to use 'mine()' instead of 'startMine()' for mining process. Starting from January 2025, 'startMine()' will be completely terminated.")
+    @deprecated("It is recommended to use 'mine()' instead of 'mine()' for mining process. Starting from January 2025, 'mine()' will be completely terminated.")
     def startMine(self) -> None:
         """
         Frequent pattern mining process will start from here
@@ -353,22 +353,24 @@ class Apriori(_ab._frequentPatterns):
 
         return dataFrame
 
-    def save(self, outFile: str, seperator = "\t" ) -> None:
+    def save(self, oFile: str, seperator = "\t" ) -> None:
         """
 
         Complete set of frequent patterns will be loaded in to an output file
 
-        :param outFile: name of the output file
-        :type outFile: csvfile
+        :param oFile: name of the output file
+        :type oFile: csvfile
+        :param seperator: variable to store separator value
+        :type seperator: string
         :return: None
         """
 
-        # self._oFile = outFile
+        # self._oFile = oFile
         # writer = open(self._oFile, 'w+')
         # for x, y in self._finalPatterns.items():
         #     patternsAndSupport = x.strip() + ":" + str(y[0])
         #     writer.write("%s \n" % patternsAndSupport)
-        with open(outFile, 'w') as f:
+        with open(oFile, 'w') as f:
             for x, y in self._finalPatterns.items():
                 x = seperator.join(x)
                 f.write(f"{x}:{y}\n")
@@ -400,7 +402,7 @@ if __name__ == "__main__":
             _ap = Apriori(_ab._sys.argv[1], _ab._sys.argv[3], _ab._sys.argv[4])
         if len(_ab._sys.argv) == 4:
             _ap = Apriori(_ab._sys.argv[1], _ab._sys.argv[3])
-        _ap.startMine()
+        _ap.mine()
         _ap.mine()
         print("Total number of Frequent Patterns:", len(_ap.getPatterns()))
         _ap.save(_ap._sys.argv[2])

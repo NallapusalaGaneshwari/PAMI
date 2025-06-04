@@ -206,6 +206,7 @@ class _Dataset:
         self.cnt = 1
         self.sep = sep
         self.createItemsets(datasetPath)
+        self.Database = []
 
     def createItemsets(self, datasetPath: Union[str, _ab._pd.DataFrame]) -> None:
         """
@@ -214,7 +215,7 @@ class _Dataset:
         :type datasetPath: str
         :return: None
         """
-        self.Database = []
+
         if isinstance(datasetPath, _ab._pd.DataFrame):
             utilities, data, transactionUtility = [], [], []
             if datasetPath.empty:
@@ -457,7 +458,7 @@ class EFIM(_ab._utilityPatterns):
     _temp = [0] * 5000
     _patternCount = int()
     _maxMemory = 0
-    _startTime = float()
+    #_startTime = float()
     _endTime = float()
     _finalPatterns = {}
     _iFile = " "
@@ -471,6 +472,8 @@ class EFIM(_ab._utilityPatterns):
 
     def __init__(self, iFile, minUtil, sep="\t") -> None:
         super().__init__(iFile, minUtil, sep)
+        self.oFile = None
+        self._dataset = None
         self._sep = sep
         self._highUtilityitemSets = []
         self._candidateCount = 0
@@ -490,7 +493,7 @@ class EFIM(_ab._utilityPatterns):
         self._memoryUSS = float()
         self._memoryRSS = float()
 
-    @deprecated("It is recommended to use 'mine()' instead of 'startMine()' for mining process. Starting from January 2025, 'startMine()' will be completely terminated.")
+    @deprecated("It is recommended to use 'mine()' instead of 'mine()' for mining process. Starting from January 2025, 'mine()' will be completely terminated.")
     def startMine(self) -> None:
         """
         Start the EFIM algorithm.
@@ -845,7 +848,7 @@ if __name__ == '__main__':
             _ap = EFIM(_ab._sys.argv[1], int(_ab._sys.argv[3]), _ab._sys.argv[4])
         if len(_ab._sys.argv) == 4:    #takes "\t" as a separator
             _ap = EFIM(_ab._sys.argv[1], int(_ab._sys.argv[3]))
-        _ap.startMine()
+        _ap.mine()
         _ap.mine()
         print("Total number of High Utility Patterns:", len(_ap.getPatterns()))
         _ap.save(_ab._sys.argv[2])
@@ -854,7 +857,7 @@ if __name__ == '__main__':
         print("Total ExecutionTime in seconds:", _ap.getRuntime())
     else:
         _ap = EFIM('/Users/likhitha/Downloads/Utility_T10I4D100K.csv', 50000, '\t')
-        _ap.startMine()
+        _ap.mine()
         _ap.mine()
         print("Total number of High Utility Patterns:", len(_ap.getPatterns()))
         _ap.save('/Users/likhitha/Downloads/UPGrowth_output.txt')

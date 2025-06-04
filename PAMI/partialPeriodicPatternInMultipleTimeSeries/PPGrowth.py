@@ -6,7 +6,7 @@
 #
 #     obj = alg.PPGrowth(iFile, minSup, maxPer)
 #
-#     obj.startMine()
+#     obj.mine()
 #
 #     periodicFrequentPatterns = obj.getPatterns()
 #
@@ -235,7 +235,7 @@ class _Tree(object):
         :return: support, periodicity
         """
 
-        global _maxPer, _lno,_period,_periodicSupport
+        #global _maxPer, _lno,_period,_periodicSupport
         timeStamps.sort()
         cur = 0
         per = list()
@@ -244,7 +244,7 @@ class _Tree(object):
             timedif=timeStamps[j] - cur
             per.append(timedif)
             cur = timeStamps[j]
-            if(_period>=timedif):
+            if _period>=timedif:
                 sup += 1
         per.append(_lno - cur)
         if len(per) == 0:
@@ -371,7 +371,7 @@ class PPGrowth(_ab._partialPeriodicPatterns):
 
     :Methods:
 
-        startMine()
+        mine()
             Mining process will start from here
         getPatterns()
             Complete set of patterns will be retrieved with this function
@@ -420,7 +420,7 @@ class PPGrowth(_ab._partialPeriodicPatterns):
 
         obj = alg.PPGrowth(iFile, minSup, maxPer)
 
-        obj.startMine()
+        obj.mine()
 
         periodicFrequentPatterns = obj.getPatterns()
 
@@ -622,13 +622,13 @@ class PPGrowth(_ab._partialPeriodicPatterns):
         self._Database=newDatabase
         return rechangeDic
 
-    @deprecated("It is recommended to use mine() instead of startMine() for mining process")
+    @deprecated("It is recommended to use mine() instead of mine() for mining process")
     def startMine(self):
         """
         Mining process will start from this function
         """
 
-        global _minSup, _maxPer, _lno,_period,_periodicSupport
+        #global _minSup, _maxPer, _lno,_period,_periodicSupport
         self._startTime = _ab._time.time()
         if self._iFile is None:
             raise Exception("Please enter the file path or file name:")
@@ -664,7 +664,7 @@ class PPGrowth(_ab._partialPeriodicPatterns):
         Mining process will start from this function
         """
 
-        global _minSup, _maxPer, _lno,_period,_periodicSupport
+        #global _minSup, _maxPer, _lno,_period,_periodicSupport
         self._startTime = _ab._time.time()
         if self._iFile is None:
             raise Exception("Please enter the file path or file name:")
@@ -775,7 +775,7 @@ if __name__ == "__main__":
             _ap = PPGrowth(_ab._sys.argv[1], _ab._sys.argv[3], _ab._sys.argv[4], _ab._sys.argv[5])
         if len(_ab._sys.argv) == 5:
             _ap = PPGrowth(_ab._sys.argv[1], _ab._sys.argv[3], _ab._sys.argv[4])
-        _ap.startMine()
+        _ap.mine()
         print("Total number of Patterns:", len(_ap.getPatterns()))
         _ap.save(_ab._sys.argv[2])
         print("Total Memory in USS:", _ap.getMemoryUSS())

@@ -214,7 +214,7 @@ class lift:
         # sorted(k, key=lambda x: self._frequentPatterns[x], reverse=True)
         # return k
 
-    @deprecated("It is recommended to use 'mine()' instead of 'startMine()' for mining process. Starting from January 2025, 'startMine()' will be completely terminated.")
+    @deprecated("It is recommended to use 'mine()' instead of 'mine()' for mining process. Starting from January 2025, 'mine()' will be completely terminated.")
     def startMine(self):
         """
         Association rule mining process will start from here
@@ -239,9 +239,9 @@ class lift:
                     antecedent = c
                     consequent = tuple(sorted([x for x in keys[i] if x not in antecedent]))
                     # print(antecedent, consequent)
-                    lift = key / (self._associationRules[antecedent]) * self._associationRules[consequent]
-                    if lift >= self._minLift:
-                        self._associationRules[antecedent + tuple(['->']) + keys[i]] = lift
+                    lift_ = key / (self._associationRules[antecedent]) * self._associationRules[consequent]
+                    if lift_ >= self._minLift:
+                        self._associationRules[antecedent + tuple(['->']) + keys[i]] = lift_
 
         self._endTime = _ab._time.time()
         process = _ab._psutil.Process(_ab._os.getpid())
@@ -340,8 +340,8 @@ if __name__ == "__main__":
         if len(_ab._sys.argv) == 5:
             _ap = lift(_ab._sys.argv[1], float(_ab._sys.argv[3]), _ab._sys.argv[4])
         if len(_ab._sys.argv) == 4:
-            _ap = lift(_ab._sys.argv[1], _ab._sys.argv[3])
-        _ap.startMine()
+            _ap = lift(_ab._sys.argv[1], float(_ab._sys.argv[3]),sep='\t')
+        _ap.mine()
         _ap.mine()
         print("Total number of Association Rules:", len(_ap.getAssociationRules()))
         _ap.save(_ab._sys.argv[2])

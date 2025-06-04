@@ -6,7 +6,7 @@
 #
 #             obj = alg.kPFPMiner(iFile, k)
 #
-#             obj.startMine()
+#             obj.mine()
 #
 #             periodicFrequentPatterns = obj.getPatterns()
 #
@@ -97,7 +97,7 @@ class kPFPMiner(_ab._periodicFrequentPatterns):
 
     :Methods:
 
-        startMine()
+        mine()
             Mining process will start from here
         getPatterns()
             Complete set of patterns will be retrieved with this function
@@ -143,7 +143,7 @@ class kPFPMiner(_ab._periodicFrequentPatterns):
 
             obj = alg.kPFPMiner(iFile, k)
 
-            obj.startMine()
+            obj.mine()
 
             periodicFrequentPatterns = obj.getPatterns()
 
@@ -224,7 +224,7 @@ class kPFPMiner(_ab._periodicFrequentPatterns):
         tids.sort()
         cur=0
         per=list()
-        sup=0
+        #sup=0
         #print(tids)
         for i in range(len(tids)-1):
             j = i + 1
@@ -257,7 +257,7 @@ class kPFPMiner(_ab._periodicFrequentPatterns):
                     self._tidList[si].append(n)
         for x, y in self._mapSupport.items():
             self._mapSupport[x][1] = max(self._mapSupport[x][1], abs(n - self._mapSupport[x][2]))
-        plist = [key for key, value in sorted(self._mapSupport.items(), key=lambda x: x[1], reverse=True)]
+        plist = [key for key, value in sorted(self._mapSupport.items(), key=lambda x_: x_[1], reverse=True)]
         for i in plist:
             if len(self._finalPatterns) >= self._k:
                 break
@@ -293,7 +293,7 @@ class kPFPMiner(_ab._periodicFrequentPatterns):
                 self._finalPatterns = {k: v for k, v in sorted(self._finalPatterns.items(), key=lambda item: item[1], reverse=True)}
                 self._maximum = max([i for i in self._finalPatterns.values()])
         else:
-            for x, y in sorted(self._finalPatterns.items(), key=lambda x: x[1], reverse=True):
+            for x, y in sorted(self._finalPatterns.items(), key=lambda _x: _x[1], reverse=True):
                 if val < y:
                     del self._finalPatterns[x]
                     self._finalPatterns[sample] = val
@@ -392,6 +392,40 @@ class kPFPMiner(_ab._periodicFrequentPatterns):
         self._memoryUSS = process.memory_full_info().uss
         self._memoryRSS = process.memory_info().rss
 
+    def mine(self):
+        """
+        Main function of the program
+
+        """
+        self._startTime = _ab._time.time()
+        if self._iFile is None:
+            raise Exception("Please enter the file path or file name:")
+        if self._k is None:
+            raise Exception("Please enter the Minimum Support")
+        self._creatingItemSets()
+        self._k = self._convert(self._k)
+        plist = self._frequentOneItem()
+        for i in range(len(plist)):
+            itemI = plist[i]
+            tidSetI = self._tidList[itemI]
+            itemSetX = [itemI]
+            itemSets = []
+            tidSets = []
+            for j in range(i + 1, len(plist)):
+                itemJ = plist[j]
+                tidSetJ = self._tidList[itemJ]
+                y1 = list(set(tidSetI).intersection(tidSetJ))
+                if self.getPer_Sup(y1) <= self._maximum:
+                    itemSets.append(itemJ)
+                    tidSets.append(y1)
+            self._Generation(itemSetX, itemSets, tidSets)
+        print("kPFPMiner has successfully generated top-k frequent patterns")
+        self._endTime = _ab._time.time()
+        self._memoryUSS = float()
+        self._memoryRSS = float()
+        process = _ab._psutil.Process(_ab._os.getpid())
+        self._memoryUSS = process.memory_full_info().uss
+        self._memoryRSS = process.memory_info().rss
     def getMemoryUSS(self):
         """Total amount of USS memory consumed by the mining process will be retrieved from this function
 
@@ -468,7 +502,7 @@ if __name__ == "__main__":
             _ap = kPFPMiner(_ab._sys.argv[1], _ab._sys.argv[3], _ab._sys.argv[4])
         if len(_ab._sys.argv) == 4:
             _ap = kPFPMiner(_ab._sys.argv[1], _ab._sys.argv[3])
-        _ap.startMine()
+        _ap.mine()
         _Patterns = _ap.getPatterns()
         print("Total number of top-k periodic frequent patterns:", len(_Patterns))
         _ap.save(_ab._sys.argv[2])

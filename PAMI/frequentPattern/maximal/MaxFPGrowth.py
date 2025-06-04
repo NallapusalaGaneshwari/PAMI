@@ -57,7 +57,7 @@ from deprecated import deprecated
 
 
 _minSup = str()
-global maximalTree
+#global maximalTree
 
 
 class _Node(object):
@@ -258,7 +258,7 @@ class _Tree(object):
         """
         for i in self.summaries[nodeValue]:
             del i.parent.children[nodeValue]
-            i = None
+            #i = None
 
     def generatePatterns(self, prefix, patterns, maximalTree):
         """
@@ -267,6 +267,8 @@ class _Tree(object):
         :type prefix: str
         :param patterns: the patterns we want to generate for this node
         :type patterns: list
+        :param maximalTree: maximal frequent patterns
+        :type maximalTree: _MPTree()
         :return: the maximal frequent patterns
         :rtype: list
         """
@@ -647,7 +649,7 @@ class MaxFPGrowth(_ab._frequentPatterns):
             t1.append(self._rankdup[i])
         return t1
 
-    @deprecated("It is recommended to use 'mine()' instead of 'startMine()' for mining process. Starting from January 2025, 'startMine()' will be completely terminated.")
+    @deprecated("It is recommended to use 'mine()' instead of 'mine()' for mining process. Starting from January 2025, 'mine()' will be completely terminated.")
     def startMine(self):
         """
         Mining process will start from this function
@@ -778,7 +780,7 @@ if __name__ == "__main__":
             _ap = MaxFPGrowth(_ab._sys.argv[1], _ab._sys.argv[3], _ab._sys.argv[4])
         if len(_ab._sys.argv) == 4:
             _ap = MaxFPGrowth(_ab._sys.argv[1], _ab._sys.argv[3])
-        _ap.startMine()
+        _ap.mine()
         _ap.mine()
         _ap.save(_ab._sys.argv[2])
         print("Total number of Maximal Frequent Patterns:", len(_ap.getPatterns()))

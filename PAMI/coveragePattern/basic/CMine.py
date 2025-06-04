@@ -58,7 +58,8 @@ Copyright (C)  2021 Rage Uday Kiran
 
 from PAMI.coveragePattern.basic import abstract as _ab
 from typing import List, Dict, Tuple, Set, Union, Any, Generator
-from deprecated import deprecated
+from deprecation import deprecated
+
 
 class CMine(_ab._coveragePatterns):
     """
@@ -177,7 +178,8 @@ class CMine(_ab._coveragePatterns):
     _lno = 0
 
 
-    def _convert(self, value) -> Union[int, float]:
+    @staticmethod
+    def _convert(value) -> Union[int, float]:
         """
         To convert the user specified minSup value
 
@@ -255,7 +257,7 @@ class CMine(_ab._coveragePatterns):
 
         :param item_set:
         :return: Dictionary
-        :rtype: dict
+        :rtype: dict[str,int]
         """
         bitset = {}
 
@@ -265,7 +267,7 @@ class CMine(_ab._coveragePatterns):
             for i in range(1,len(v)):
                 diff = int(v[i]) - int(v[i-1])
                 bitset[k] = (bitset[k] << diff) | 0b1
-            bitset[k] = (bitset[k] << (self._lno - int(v[i])))
+            bitset[k] = (bitset[k] << (self._lno - int(v[-1])))
         return bitset
 
     def genPatterns(self,prefix: Tuple[str, int],tidData: List[Tuple[str, int]]) -> None:
@@ -305,7 +307,7 @@ class CMine(_ab._coveragePatterns):
             #print(i,tidData[i][0])
             self.genPatterns(tidData[i],tidData[i+1:length])
 
-    @deprecated("It is recommended to use 'mine()' instead of 'startMine()' for mining process. Starting from January 2025, 'startMine()' will be completely terminated.")
+    @deprecated("It is recommended to use 'mine()' instead of 'mine()' for mining process. Starting from January 2025, 'mine()' will be completely terminated.")
     def startMine(self) -> None:
         """ Main method to start """
 
@@ -397,8 +399,8 @@ class CMine(_ab._coveragePatterns):
         """
         Function to send the set of coverage patterns after completion of the mining process
 
-        :return: returning coverage patterns
-        :rtype: dict
+        :return: Dictionary of patterns and their support counts.
+        :rtype: Dict[str, int]
         """
         return self._finalPatterns
 
@@ -419,7 +421,7 @@ if __name__=="__main__":
             _ap = CMine(_ab._sys.argv[1], _ab._sys.argv[3], _ab._sys.argv[4], _ab._sys.argv[5], _ab._sys.argv[6])
         if len(_ab._sys.argv) == 6:
             _ap = CMine(_ab._sys.argv[1], _ab._sys.argv[3], _ab._sys.argv[4], _ab._sys.argv[5])
-        _ap.startMine()
+        _ap.mine()
         _ap.mine()
         print("Total number of coverage Patterns:", len(_ap.getPatterns()))
         _ap.save(_ab._sys.argv[2])

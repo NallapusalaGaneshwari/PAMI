@@ -1,5 +1,5 @@
 import random as _rd
-import sys as _sys
+#import sys as _sys
 
 
 class createSyntheticUtility:
@@ -51,7 +51,7 @@ class createSyntheticUtility:
             st = str()
             st1 = str()
             su = []
-            for i in range(length):
+            for _ in range(length):
                 item = _rd.randint(1, self._noOfItems)
                 utility = _rd.randint(1, self._maxUtilRange) 
                 st = st + str(item) + '\t'
@@ -63,7 +63,7 @@ class createSyntheticUtility:
             writer.write("%s \n" % st1)
             
 if __name__ == "__main__":
-    _ap = str()
+    #_ap = str()
     _ap = createSyntheticUtility(100000, 870, 100, 10)
     _ap.createUtilityDatabase("T10_util.txt")
 else:

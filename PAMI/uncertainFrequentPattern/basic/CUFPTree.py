@@ -61,6 +61,7 @@ from typing import List, Tuple
 _minSup = str()
 _ab._sys.setrecursionlimit(20000)
 _finalPatterns = {}
+global minSup
 
 
 class _Item:
@@ -271,13 +272,13 @@ class _Tree(object):
 
         :param condPatterns : conditionalPatterns generated from conditionalPattern method for respective node
         :type condPatterns : list
-        :support : the support of conditional pattern in tree
-        :support : int
+        :param support : the support of conditional pattern in tree
+        :type support : int
         :return: Tuple consist of patterns,support and updated Dictionary
         :rtype: Tuple
         """
 
-        global minSup
+
         pat = []
         sup = []
         count = {}
@@ -308,8 +309,8 @@ class _Tree(object):
         :return: None
         """
 
-        global _finalPatterns, minSup
-        for i in sorted(self.summaries, key=lambda x: (self.info.get(x))):
+        global _finalPatterns
+        for i in sorted(self.summaries, key=lambda x_: (self.info.get(x_))):
             pattern = prefix[:]
             pattern.append(i)
             s = 0
@@ -421,7 +422,7 @@ class CUFPTree(_ab._frequentPatterns):
             After updating the Database, remaining items will be added into the tree by setting root node as null
         convert()
             to convert the user specified value
-        startMine()
+        mine()
             Mining process will start from this function
 
     Execution methods
@@ -489,12 +490,13 @@ class CUFPTree(_ab._frequentPatterns):
     _minSup = str()
     _finalPatterns = {}
     _iFile = " "
-    _oFile = " "
+    oFile = " "
     _sep = " "
-    _memoryUSS = float()
-    _memoryRSS = float()
+    memoryUSS = float()
+    memoryRSS = float()
     _Database = []
     _rank = {}
+    Database1 = None
 
     def __init__(self, iFile, minSup, sep='\t') -> None:
         super().__init__(iFile, minSup, sep)
@@ -690,7 +692,7 @@ class CUFPTree(_ab._frequentPatterns):
                 self._finalPatterns[sample] = y
 
     @deprecated(
-        "It is recommended to use 'mine()' instead of 'startMine()' for mining process. Starting from January 2025, 'startMine()' will be completely terminated.")
+        "It is recommended to use 'mine()' instead of 'mine()' for mining process. Starting from January 2025, 'mine()' will be completely terminated.")
     def startMine(self) -> None:
         """
         Main method where the patterns are mined by constructing tree and remove the false patterns by counting the original support of a patterns.
@@ -705,11 +707,11 @@ class CUFPTree(_ab._frequentPatterns):
 
         :return: None
         """
-        global minSup
+
         self._startTime = _ab._time.time()
         self._creatingItemSets()
         self._minSup = self._convert(self._minSup)
-        minSup = self._minSup
+        #minSup = self._minSup
         self._finalPatterns = {}
         mapSupport, plist = self._frequentOneItem()
         self.Database1 = self._updateTransactions(mapSupport)
@@ -817,7 +819,7 @@ if __name__ == "__main__":
             _ap = CUFPTree(_ab._sys.argv[1], _ab._sys.argv[3], _ab._sys.argv[4])
         if len(_ab._sys.argv) == 4:
             _ap = CUFPTree(_ab._sys.argv[1], _ab._sys.argv[3])
-        _ap.startMine()
+        _ap.mine()
         _ap.mine()
         print("Total number of Uncertain Frequent Patterns:", len(_ap.getPatterns()))
         _ap.save(_ab._sys.argv[2])

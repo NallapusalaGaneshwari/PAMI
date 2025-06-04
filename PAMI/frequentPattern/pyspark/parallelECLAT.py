@@ -263,14 +263,14 @@ class parallelECLAT(_ab._frequentPatterns):
                 freqPatterns.update(self._genPatterns(data[i], (freqPattern, tid), data))
         return freqPatterns
 
-    def printResults(self):
-        """
-        This function is used to print the results
-        """
-        print("Total number of Frequent Patterns:", len(self.getPatterns()))
-        print("Total Memory in USS:", self.getMemoryUSS())
-        print("Total Memory in RSS", self.getMemoryRSS())
-        print("Total ExecutionTime in ms:", self.getRuntime())
+    # def printResults(self):
+    #     """
+    #     This function is used to print the results
+    #     """
+    #     print("Total number of Frequent Patterns:", len(self.getPatterns()))
+    #     print("Total Memory in USS:", self.getMemoryUSS())
+    #     print("Total Memory in RSS", self.getMemoryRSS())
+    #     print("Total ExecutionTime in ms:", self.getRuntime())
 
     def _convert(self, value):
         """
@@ -295,7 +295,7 @@ class parallelECLAT(_ab._frequentPatterns):
         print(type(value), value)
         return value
 
-    @deprecated("It is recommended to use 'mine()' instead of 'startMine()' for mining process. Starting from January 2025, 'startMine()' will be completely terminated.")
+    @deprecated("It is recommended to use 'mine()' instead of 'mine()' for mining process. Starting from January 2025, 'mine()' will be completely terminated.")
     def startMine(self):
         """
         Frequent pattern mining process will start from here
@@ -316,7 +316,7 @@ class parallelECLAT(_ab._frequentPatterns):
         self._lno = data.count()
         self._minSup = self._convert(self._minSup)
 
-        frequentItems = None
+        #frequentItems = None
         frequentItems = data.zipWithIndex() \
             .flatMap(lambda x: [(str(item), x[1]) for item in x[0]]) \
             .groupByKey() \
@@ -360,7 +360,7 @@ if __name__ == "__main__":
             _ap = parallelECLAT(_ab._sys.argv[1], _ab._sys.argv[3], _ab._sys.argv[4], _ab._sys.argv[5])
         if len(_ab._sys.argv) == 5:
             _ap = parallelECLAT(_ab._sys.argv[1], _ab._sys.argv[3], _ab._sys.argv[4])
-        _ap.startMine()
+        _ap.mine()
         _ap.mine()
         _finalPatterns = _ap.getPatterns()
         print("Total number of Frequent Patterns:", len(_finalPatterns))

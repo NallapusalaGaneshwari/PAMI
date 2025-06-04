@@ -176,7 +176,7 @@ class _Tree(object):
                 l1 = i - 1
                 lp = []
                 while l1 >= 0:
-                    if nei == None:
+                    if nei is None:
                         break
                     if transaction[l1].item in nei:
                         lp.append(transaction[l1].probability)
@@ -275,11 +275,11 @@ class _Tree(object):
 
         :param condPatterns : conditionalPatterns generated from conditionalPattern method for respective node
         :type condPatterns : list
-        :support : the support of conditional pattern in tree
-        :support : int
+        :param support : the support of conditional pattern in tree
+        :type support : int
         """
 
-        global minSup
+        #global minSup
         pat = []
         sup = []
         count = {}
@@ -309,14 +309,15 @@ class _Tree(object):
         :type prefix : list
         """
 
-        global _finalPatterns, minSup
-        for i in sorted(self.summaries, key=lambda x: (self.info.get(x))):
+        _finalPatterns_ = None
+        minSup = None
+        for i in sorted(self.summaries, key=lambda x_: (self.info.get(x_))):
             pattern = prefix[:]
             pattern.append(i)
             s = 0
             for x in self.summaries[i]:
                 s += x.probability
-            _finalPatterns[tuple(pattern)] = self.info[i]
+            _finalPatterns_[tuple(pattern)] = self.info[i]
             if s >= minSup:
                 patterns, support, info = self.conditionalPatterns(i)
                 conditionalTree = _Tree()
@@ -400,7 +401,7 @@ class GFPGrowth(_ab._frequentPatterns):
 
     :Methods:
 
-        startMine()
+        mine()
             Mining process will start from here
         getPatterns()
             Complete set of patterns will be retrieved with this function
@@ -424,7 +425,7 @@ class GFPGrowth(_ab._frequentPatterns):
             After updating the Database, remaining items will be added into the tree by setting root node as null
         convert()
             to convert the user specified value
-        startMine()
+        mine()
             Mining process will start from this function
 
     Execution methods
@@ -494,12 +495,14 @@ class GFPGrowth(_ab._frequentPatterns):
     _minSup = str()
     _finalPatterns = {}
     _iFile = " "
-    _oFile = " "
+    oFile = " "
     _sep = " "
     _memoryUSS = float()
-    _memoryRSS = float()
+    memoryRSS = float()
     _Database = []
     _rank = {}
+    Database1 = None
+
 
     def __init__(self, iFile, nFile, minSup, sep='\t'):
         super().__init__(iFile, nFile, minSup, sep)
@@ -738,7 +741,7 @@ class GFPGrowth(_ab._frequentPatterns):
                 self._finalPatterns[sample] = y
 
     @deprecated(
-        "It is recommended to use 'mine()' instead of 'startMine()' for mining process. Starting from January 2025, 'startMine()' will be completely terminated.")
+        "It is recommended to use 'mine()' instead of 'mine()' for mining process. Starting from January 2025, 'mine()' will be completely terminated.")
     def startMine(self):
         """
         Main method where the patterns are mined by constructing tree and remove the false patterns by counting the original support of a patterns
@@ -749,12 +752,12 @@ class GFPGrowth(_ab._frequentPatterns):
         """
         Main method where the patterns are mined by constructing tree and remove the false patterns by counting the original support of a patterns
         """
-        global minSup
+        #global minSup
         self._startTime = _ab._time.time()
         self._creatingItemSets()
         self._creatingNeighbours()
         # self._minSup = self._convert(self._minSup)
-        minSup = self._minSup
+        #minSup = self._minSup
         self._finalPatterns = {}
         mapSupport, plist = self._frequentOneItem()
         self.Database1 = self._updateTransactions(mapSupport)
@@ -864,7 +867,7 @@ if __name__ == "__main__":
             _ap = GFPGrowth(_ab._sys.argv[1], _ab._sys.argv[3], _ab._sys.argv[4], _ab._sys.argv[5])
         if len(_ab._sys.argv) == 5:
             _ap = GFPGrowth(_ab._sys.argv[1], _ab._sys.argv[3], _ab._sys.argv[4])
-        _ap.startMine()
+        _ap.mine()
         _ap.mine()
         _Patterns = _ap.getPatterns()
         print("Total number of Patterns:", len(_Patterns))

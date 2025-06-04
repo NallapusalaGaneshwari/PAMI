@@ -7,11 +7,11 @@
 # --------------------------------------------------------
 #
 #
-#             import PAMI.sequentialPatternMining.basic.SPADE as alg
+#             import PAMI.sequentialPattern.basic.bitSPADE as alg
 #
-#             obj = alg.SPADE(iFile, minSup)
+#             obj = alg.bitSPADE(iFile, minSup)
 #
-#             obj.startMine()
+#             obj.mine()
 #
 #             sequentialPatternMining = obj.getPatterns()
 #
@@ -117,7 +117,7 @@ class bitSPADE(_ab._sequentialPatterns):
 
     :Methods:
 
-            startMine()
+            mine()
                 Mining process will start from here
             getPatterns()
                 Complete set of patterns will be retrieved with this function
@@ -156,11 +156,11 @@ class bitSPADE(_ab._sequentialPatterns):
     ----------------------------------------------------
     .. code-block:: python
 
-            import PAMI.sequentialPatternMining.basic.SPADE as alg
+            import PAMI.sequentialPattern.basic.bitSPADE as alg
 
-            obj = alg.SPADE(iFile, minSup)
+            obj = alg.bitSPADE(iFile, minSup)
 
-            obj.startMine()
+            obj.mine()
 
             sequentialPatternMining = obj.getPatterns()
 
@@ -207,6 +207,7 @@ class bitSPADE(_ab._sequentialPatterns):
         Storing the complete transactions of the database/input file in a database variable
         """
         self._Database = []
+        temp2 = None
 
         if isinstance(self._iFile, _ab._pd.DataFrame):
             temp = []
@@ -217,15 +218,13 @@ class bitSPADE(_ab._sequentialPatterns):
                 temp = self._iFile['Transactions'].tolist()
             if "tid" in i:
                 temp2=self._iFile[''].tolist()
-            addList=[]
-            addList.append(temp[0])
+            addList= [temp[0]]
             for k in range(len(temp)-1):
                 if temp2[k]==temp[k+1]:
                     addList.append(temp[k+1])
                 else:
                     self._Database.append(addList)
-                    addList=[]
-                    addList.append(temp[k+1])
+                    addList= [temp[k + 1]]
             self._Database.append(addList)
         if isinstance(self._iFile, str):
             if _ab._validators.url(self._iFile):
@@ -247,7 +246,7 @@ class bitSPADE(_ab._sequentialPatterns):
 
                             seq = []
                             for i in temp:
-                                k = -2
+                                #k = -2
                                 if len(i)>1:
                                     seq.append(list(sorted(set(i.split()))))
 
@@ -462,18 +461,18 @@ class bitSPADE(_ab._sequentialPatterns):
             for latestWord2 in self._xLenDatabase[rowLen][bs].keys():
                 if latestWord != latestWord2:
 
-                        next=self.combDifPatterns(self._xLenDatabase[rowLen][bs][latestWord],self._xLenDatabase[rowLen][bs][latestWord2])
+                        next1=self.combDifPatterns(self._xLenDatabase[rowLen][bs][latestWord], self._xLenDatabase[rowLen][bs][latestWord2])
                         next2=self.combDifPatterns(self._xLenDatabase[rowLen][bs][latestWord2],self._xLenDatabase[rowLen][bs][latestWord])
                         nextSame=self.combSamePatterns(self._xLenDatabase[rowLen][bs][latestWord],self._xLenDatabase[rowLen][bs][latestWord2])
 
                         
-                        if len(next)>=self._minSup:
+                        if len(next1)>=self._minSup:
                             nextRow,nextbs= self.makeNextRow(bs,latestWord,latestWord2)
                             if str(nextRow) not in self._finalPatterns.keys():
-                                self._finalPatterns[str(nextRow)] = len(next)
+                                self._finalPatterns[str(nextRow)] = len(next1)
                                 if nextbs not in self._xLenDatabase[rowLen + 1]:
                                     self._xLenDatabase[rowLen + 1][nextbs]={}
-                                self._xLenDatabase[rowLen+1][nextbs][latestWord2]={i:next[i] for i in next }
+                                self._xLenDatabase[rowLen+1][nextbs][latestWord2]={i:next1[i] for i in next1}
                                 self.makexLenDatabase(rowLen+1,nextbs,latestWord2)
                         if len(next2)>=self._minSup:
                             nextRow,nextbs = self.makeNextRow(bs, latestWord2, latestWord)
@@ -495,31 +494,31 @@ class bitSPADE(_ab._sequentialPatterns):
                    
 
                 else:
-                    next= self.combDifPatterns(self._xLenDatabase[rowLen][bs][latestWord],self._xLenDatabase[rowLen][bs][latestWord2])
+                    next1= self.combDifPatterns(self._xLenDatabase[rowLen][bs][latestWord], self._xLenDatabase[rowLen][bs][latestWord2])
                     
-                    if len(next) >= self._minSup:
+                    if len(next1) >= self._minSup:
                         nextRow, nextbs= self.makeNextRow(bs,latestWord,latestWord2)
                         if str(nextRow) not in self._finalPatterns.keys():
                             if nextbs not in self._xLenDatabase[rowLen+1]:
                                 self._xLenDatabase[rowLen+1][nextbs]={}
-                            self._finalPatterns[str(nextRow)] = len(next)
-                            self._xLenDatabase[rowLen+1][nextbs][latestWord2] ={i:next[i] for i in next }
+                            self._finalPatterns[str(nextRow)] = len(next1)
+                            self._xLenDatabase[rowLen+1][nextbs][latestWord2] ={i:next1[i] for i in next1}
                             self.makexLenDatabase(rowLen+1, nextbs, latestWord2)
             if bs in self._xLenDatabaseSame[rowLen]:
                 for latestWord2 in self._xLenDatabaseSame[rowLen][bs]:
 
 
-                            next = self.combDifPatterns(self._xLenDatabaseSame[rowLen][bs][latestWord2],self._xLenDatabase[rowLen][bs][latestWord])
+                            next1 = self.combDifPatterns(self._xLenDatabaseSame[rowLen][bs][latestWord2], self._xLenDatabase[rowLen][bs][latestWord])
 
                             
-                            if len(next) >= self._minSup:
+                            if len(next1) >= self._minSup:
 
                                 nextRow ,nextbs= self.makeNextRowSame(bs, latestWord2, latestWord)
                                 if str(nextRow) not in self._finalPatterns.keys():
                                     if nextbs not in self._xLenDatabase[rowLen + 1]:
                                         self._xLenDatabase[rowLen + 1][nextbs] = {}
-                                    self._finalPatterns[str(nextRow)] = len(next)
-                                    self._xLenDatabase[rowLen + 1][nextbs][latestWord] = {i:next[i] for i in next }
+                                    self._finalPatterns[str(nextRow)] = len(next1)
+                                    self._xLenDatabase[rowLen + 1][nextbs][latestWord] = {i:next1[i] for i in next1}
                                     self.makexLenDatabase(rowLen + 1, nextbs, latestWord)
 
                        
@@ -537,31 +536,31 @@ class bitSPADE(_ab._sequentialPatterns):
             self._xLenDatabaseSame[rowLen + 1] = {}
         if bs in self._xLenDatabase[rowLen]:
             for latestWord2 in self._xLenDatabase[rowLen][bs]:
-                    next =self.combDifPatterns(self._xLenDatabaseSame[rowLen][bs][latestWord],self._xLenDatabase[rowLen][bs][latestWord2])
-                    if len(next) >= self._minSup:
+                    next1 =self.combDifPatterns(self._xLenDatabaseSame[rowLen][bs][latestWord], self._xLenDatabase[rowLen][bs][latestWord2])
+                    if len(next1) >= self._minSup:
                         nextRow ,nextbs= self.makeNextRowSame(bs, latestWord, latestWord2)
                         if str(nextRow) not in self._finalPatterns.keys():
                             if nextbs not in self._xLenDatabase[rowLen + 1]:
                                 self._xLenDatabase[rowLen + 1][nextbs] = {}
-                            self._finalPatterns[str(nextRow)] = len(next)
-                            self._xLenDatabase[rowLen + 1][nextbs][latestWord2]= {i:next[i] for i in next}
+                            self._finalPatterns[str(nextRow)] = len(next1)
+                            self._xLenDatabase[rowLen + 1][nextbs][latestWord2]= {i:next1[i] for i in next1}
                             self.makexLenDatabase(rowLen + 1, nextbs, latestWord2)
 
                
         if bs in self._xLenDatabaseSame[rowLen]:
             for latestWord2 in self._xLenDatabaseSame[rowLen][bs]:
                 if latestWord2!=latestWord:
-                        next= self.combSamePatterns(self._xLenDatabaseSame[rowLen][bs][latestWord],self._xLenDatabaseSame[rowLen][bs][latestWord2])
+                        next1= self.combSamePatterns(self._xLenDatabaseSame[rowLen][bs][latestWord], self._xLenDatabaseSame[rowLen][bs][latestWord2])
 
-                        if len(next) >= self._minSup:
+                        if len(next1) >= self._minSup:
 
                                 nextRow, nextbs,nextLate= self.makeNextRowSame2(bs, latestWord, latestWord2)
                                 if str(nextRow) not in self._finalPatterns.keys():
                                     if nextbs not in self._xLenDatabaseSame[rowLen+1]:
                                         self._xLenDatabaseSame[rowLen + 1][nextbs] = {}
 
-                                    self._finalPatterns[str(nextRow)] = len(next)
-                                    self._xLenDatabaseSame[rowLen + 1][nextbs][nextLate] = {i:next[i] for i in next}
+                                    self._finalPatterns[str(nextRow)] = len(next1)
+                                    self._xLenDatabaseSame[rowLen + 1][nextbs][nextLate] = {i:next1[i] for i in next1}
                                     self.makexLenDatabaseSame(rowLen + 1, nextbs, nextLate)
                     
     def makeNextRow(self,bs, latestWord, latestWord2):
@@ -587,7 +586,7 @@ class bitSPADE(_ab._sequentialPatterns):
         """
 
         bs=list(bs)
-        x=1
+        #x=1
         x2=[latestWord,]
         while bs:
             x=bs.pop()
@@ -614,7 +613,7 @@ class bitSPADE(_ab._sequentialPatterns):
         """
 
         bs = list(bs)
-        x = 1
+        #x = 1
         x2 = [latestWord, latestWord2]
         while bs:
             x = bs.pop()
@@ -649,7 +648,7 @@ class bitSPADE(_ab._sequentialPatterns):
         bs2 = bs + (x2,)
         return  bs2,bs,x2
 
-    @deprecated("It is recommended to use mine() instead of startMine() for mining process")
+    @deprecated("It is recommended to use mine() instead of mine() for mining process")
     def startMine(self):
         """
         Frequent pattern mining process will start from here
@@ -669,7 +668,7 @@ class bitSPADE(_ab._sequentialPatterns):
         self._memoryRSS = process.memory_info().rss
         print("Sequential Frequent patterns were generated successfully using SPADE algorithm ")
 
-    def Mine(self):
+    def mine(self):
         """
         Frequent pattern mining process will start from here
         """
@@ -772,7 +771,7 @@ if __name__ == "__main__":
             _ap = bitSPADE(_ab._sys.argv[1], _ab._sys.argv[3], _ab._sys.argv[4])
         if len(_ab._sys.argv) == 4:
             _ap = bitSPADE(_ab._sys.argv[1], _ab._sys.argv[3])
-        _ap.startMine()
+        _ap.mine()
         _Patterns = _ap.getPatterns()
         print("Total number of Frequent Patterns:", len(_Patterns))
         _ap.savePatterns(_ab._sys.argv[2])
@@ -783,15 +782,4 @@ if __name__ == "__main__":
         _run = _ap.getRuntime()
         print("Total ExecutionTime in ms:", _run)
     else:
-        _ap = bitSPADE('test.txt',2, '\t')
-        _ap.startMine()
-        _Patterns = _ap.getPatterns()
-        _memUSS = _ap.getMemoryUSS()
-        print("Total Memory in USS:", _memUSS)
-        _memRSS = _ap.getMemoryRSS()
-        print("Total Memory in RSS", _memRSS)
-        _run = _ap.getRuntime()
-        print("Total ExecutionTime in ms:", _run)
-        print("Total number of Frequent Patterns:", len(_Patterns))
         print("Error! The number of input parameters do not match the total number of parameters provided")
-        _ap.save("priOut2.txt")

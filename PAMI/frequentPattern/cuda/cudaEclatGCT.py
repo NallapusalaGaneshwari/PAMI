@@ -54,7 +54,7 @@ Copyright (C)  2021 Rage Uday Kiran
 from deprecated import deprecated
 from PAMI.frequentPattern.basic import abstract as _ab
 
-minSup = str()
+#minSup = str()
 _ab._sys.setrecursionlimit(20000)
 
 import os
@@ -163,7 +163,7 @@ class cudaEclatGCT:
     _minSup = 0
     _finalPatterns = {}
 
-    def __init__(self, filePath, minSup, sep):
+    def __init__(self, filePath, minSup, sep='\t'):
         self._iFile = filePath
         self._sep = sep
         self._minSup = minSup
@@ -346,7 +346,7 @@ class cudaEclatGCT:
         if len(newBasePattern) > 0:
             self.eclat(newBasePattern, final, vb_data, idx2item, item2idx)
 
-    @deprecated("It is recommended to use 'mine()' instead of 'startMine()' for mining process. Starting from January 2025, 'startMine()' will be completely terminated.")
+    @deprecated("It is recommended to use 'mine()' instead of 'mine()' for mining process. Starting from January 2025, 'mine()' will be completely terminated.")
     def startMine(self):
         """
         Frequent pattern mining process will start from here
@@ -363,7 +363,7 @@ class cudaEclatGCT:
 
         self.__creatingItemSets()
         self._minSup = self.__convert(self._minSup)
-        minSup = self._minSup
+        #minSup = self._minSup
         vb_data, idx2item = self.compute_vertical_bitvector_data()
 
         for i in range(len(vb_data)):
@@ -388,7 +388,7 @@ if __name__ == "__main__":
             _ap = cudaEclatGCT(_ab._sys.argv[1], _ab._sys.argv[3], _ab._sys.argv[4])
         if len(_ab._sys.argv) == 4:
             _ap = cudaEclatGCT(_ab._sys.argv[1], _ab._sys.argv[3])
-        _ap.startMine()
+        _ap.mine()
         _ap.mine()
         print("Total number of Frequent Patterns:", len(_ap.getPatterns()))
         _ap.save(_ap._sys.argv[2])

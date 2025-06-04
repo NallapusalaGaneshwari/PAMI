@@ -1,4 +1,4 @@
-# GTCP is graph transactional coverage pattern mining algorithm which esentially computes the coverage patterns for graph transactional data with applications in Drug discovery 
+# GTCP is graph transactional coverage pattern mining algorithm which essentially computes the coverage patterns for graph transactional data with applications in Drug discovery
 # **Importing this algorithm into a python program**
 # --------------------------------------------------------
 
@@ -31,7 +31,7 @@
 from bitarray import bitarray
 from PAMI.subgraphMining.basic import gspan as gsp
 from PAMI.extras.stats import graphDatabase as gdb
-from PAMI.GraphTransactionalCoveragePattern.basic import abstract as _ab
+from PAMI.graphTransactionalCoveragePattern.basic import abstract as _ab
 
 class GTCP:
     def __init__(self,iFile,minsup,minGTC,minGTPC,maxOR=0.2):
@@ -45,7 +45,14 @@ class GTCP:
             Df: Flat transactional Dataset
         """
 
-        self.Df=[]
+        self.Nol = None
+        self.Nol_1 = None
+        self._endTime = None
+        self._memoryUSS = None
+        self._memoryRSS = None
+        self._startTime = None
+        self.Df=None
+        self.Nol_1_temp = []
         self.Sf=[]
         self.L={}
         self.iFile=iFile
@@ -109,7 +116,7 @@ class GTCP:
         
         intersection=lastcoverage & lastbutcoverage
         cs= (lastcoverage | lastbutcoverage).count()/len(self.Sf)
-        return (intersection.count()/self.Df[lastitem].count(),cs)
+        return intersection.count() / self.Df[lastitem].count(), cs
 
 
     def GetFIDBasedFlatTransactions(self):
@@ -144,22 +151,22 @@ class GTCP:
                 l1: Pattern 1
                 l2: Pattern 2
         """
-        patterns=[]
-        Nol=[]
-        temp_l=[]
-        newpattern=[]
+        #patterns=[]
+        #Nol=[]
+        #temp_l=[]
+        #newpattern=[]
         for i in range(len(l1)):
             for j in range(i+1,len(l2)):
-                if(l1[i][:-1]==l2[j][:-1]):
-                    if(self.Coverage(l1[i][-1])>=self.Coverage(l2[j][-1])):
+                if l1[i][:-1]==l2[j][:-1]:
+                    if self.Coverage(l1[i][-1])>=self.Coverage(l2[j][-1]):
                         newpattern= l1[i]+[l2[j][-1]]
                     else:
                         newpattern=l2[j]+[l1[i][-1]]
                     
                     ov,cs=self.OverlapRatio(newpattern)
                     
-                    if(ov<=self.maxOR):
-                        if(cs>=self.minGTPC):
+                    if ov<=self.maxOR:
+                        if cs>=self.minGTPC:
                             self.L.append((newpattern,cs))
                         else:
                             self.Nol.append(newpattern)
@@ -185,9 +192,9 @@ class GTCP:
         self.Nol_1=self.getallFreq1()
         l=1
         self.L=[]
-        self.Nol_1_temp=[]
+
         for g in self.Nol_1:
-            if(self.Coverage(g[0])>=self.minGTPC):
+            if self.Coverage(g[0])>=self.minGTPC:
                 self.L.append((g,self.Coverage(g[0])))
             else:
                 self.Nol_1_temp.append(g)
@@ -196,7 +203,7 @@ class GTCP:
         self.Nol=[]
 
 
-        while(len(self.Nol_1)>0):
+        while len(self.Nol_1)>0:
             self.Nol=[]
             # print(len(self.Nol_1))
             self.join(self.Nol_1,self.Nol_1)

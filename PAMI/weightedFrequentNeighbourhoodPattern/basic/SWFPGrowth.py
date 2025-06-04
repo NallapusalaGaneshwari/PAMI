@@ -321,7 +321,7 @@ class _Tree:
                 for q in conditionalTree.generatePatterns(pattern):
                     yield q
 
-
+global _maxWeight
 class SWFPGrowth(_fp._weightedFrequentSpatialPatterns):
     """
     About this algorithm
@@ -599,13 +599,14 @@ class SWFPGrowth(_fp._weightedFrequentSpatialPatterns):
                 value = int(value)
         return value
 
+
     def __frequentOneItem(self) -> List[str]:
         """
         Generating One frequent items sets
 
         :return: None
         """
-        global _maxWeight
+
         self._mapSupport = {}
         for tr in self._Database:
             for i in tr:
@@ -671,7 +672,7 @@ class SWFPGrowth(_fp._weightedFrequentSpatialPatterns):
         return temp
 
     @deprecated(
-         "It is recommended to use 'mine()' instead of 'startMine()' for mining process. Starting from January 2025, 'startMine()' will be completely terminated.")
+         "It is recommended to use 'mine()' instead of 'mine()' for mining process. Starting from January 2025, 'mine()' will be completely terminated.")
     def startMine(self) -> None:
         """
         Frequent pattern mining process will start from here
@@ -804,13 +805,12 @@ class SWFPGrowth(_fp._weightedFrequentSpatialPatterns):
 
 if __name__ == "__main__":
     _ap = str()
-    if len(_fp._sys.argv) == 7 or len(_fp._sys.argv) == 8:
-        if len(_fp._sys.argv) == 8:
-            _ap = SWFPGrowth(_fp._sys.argv[1], _fp._sys.argv[3], _fp._sys.argv[4], _fp._sys.argv[5], _fp._sys.argv[6],
-                             _fp._sys.argv[7])
-        if len(_fp._sys.argv) == 7:
-            _ap = SWFPGrowth(_fp._sys.argv[1], _fp._sys.argv[3], _fp._sys.argv[4], _fp._sys.argv[5], _fp._sys.argv[6])
-        _ap.startMine()
+    if len(_fp._sys.argv) == 4 or len(_fp._sys.argv) == 5:
+        if len(_fp._sys.argv) == 5:
+            _ap = SWFPGrowth(_fp._sys.argv[1], _fp._sys.argv[3], _fp._sys.argv[4], _fp._sys.argv[5])
+        if len(_fp._sys.argv) == 4:
+            _ap = SWFPGrowth(_fp._sys.argv[1], _fp._sys.argv[3], _fp._sys.argv[4])
+        _ap.mine()
         _ap.mine()
         print("Total number of Weighted Spatial Frequent Patterns:", len(_ap.getPatterns()))
         _ap.save(_fp._sys.argv[2])
@@ -819,7 +819,7 @@ if __name__ == "__main__":
         print("Total ExecutionTime in ms:", _ap.getRuntime())
     else:
         _ap = SWFPGrowth('sample.txt', 'neighbourSample.txt', 150, ' ')
-        _ap.startMine()
+        _ap.mine()
         print("Total number of Weighted Spatial Frequent Patterns:", len(_ap.getPatterns()))
         _ap.save('output.txt')
         print("Total Memory in USS:", _ap.getMemoryUSS())

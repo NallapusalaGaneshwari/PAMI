@@ -162,7 +162,8 @@ class cudaAprioriGCT(_ab._frequentPatterns):
     _minSup = 0
     _finalPatterns = {}
 
-    def __init__(self, filePath, minSup, sep):
+    def __init__(self, filePath, minSup, iFile, sep='\t'):
+        super().__init__(iFile, minSup, sep)
         self._iFile = filePath
         self._sep = sep
         self._minSup = minSup
@@ -326,7 +327,7 @@ class cudaAprioriGCT(_ab._frequentPatterns):
                 s1 = str(x) + ":" + str(y)
             writer.write("%s \n" % s1)
 
-    @deprecated("It is recommended to use 'mine()' instead of 'startMine()' for mining process. Starting from January 2025, 'startMine()' will be completely terminated.")
+    @deprecated("It is recommended to use 'mine()' instead of 'mine()' for mining process. Starting from January 2025, 'mine()' will be completely terminated.")
     def startMine(self):
         """
         Frequent pattern mining process will start from here
@@ -343,7 +344,7 @@ class cudaAprioriGCT(_ab._frequentPatterns):
 
         self.__creatingItemSets()
         self._minSup = self.__convert(self._minSup)
-        minSup = self._minSup
+        #minSup = self._minSup
         vb_data, idx2item = self.compute_vertical_bitvector_data()
 
         for i in range(len(vb_data)):
@@ -396,12 +397,12 @@ class cudaAprioriGCT(_ab._frequentPatterns):
 
 if __name__ == "__main__":
     _ap = str()
-    if len(_ab._sys.argv) == 4 or len(_ab._sys.argv) == 5:
+    if len(_ab._sys.argv) == 5 or len(_ab._sys.argv) == 6:
+        if len(_ab._sys.argv) == 6:
+            _ap = cudaAprioriGCT(_ab._sys.argv[1], _ab._sys.argv[3], _ab._sys.argv[4],_ab._sys.argv[5])
         if len(_ab._sys.argv) == 5:
-            _ap = cudaAprioriGCT(_ab._sys.argv[1], _ab._sys.argv[3], _ab._sys.argv[4])
-        if len(_ab._sys.argv) == 4:
-            _ap = cudaAprioriGCT(_ab._sys.argv[1], _ab._sys.argv[3])
-        _ap.startMine()
+            _ap = cudaAprioriGCT(_ab._sys.argv[1],_ab._sys.argv[3],_ab._sys.argv[4],"\t")
+        _ap.mine()
         _ap.mine()
         print("Total number of Frequent Patterns:", len(_ap.getPatterns()))
         _ap.save(_ab._sys.argv[2])

@@ -73,7 +73,7 @@ class _utilityPatterns(_ABC):
 
     :Methods:
 
-        startMine()
+        mine()
             Calling this function will start the actual mining process
         getPatterns()
             This function will output all interesting patterns discovered by an algorithm
@@ -118,6 +118,12 @@ class _utilityPatterns(_ABC):
 
     @_abstractmethod
     def startMine(self):
+        """Code for the mining process will start from this function"""
+
+        pass
+
+    @_abstractmethod
+    def mine(self):
         """Code for the mining process will start from this function"""
 
         pass

@@ -1,5 +1,5 @@
 import random as _rd
-import sys as _sys
+#import sys as _sys
 
 
 class createSyntheticGeoreferentialTransaction:
@@ -54,14 +54,14 @@ class createSyntheticGeoreferentialTransaction:
         for i in range(self._totalTransactions):
             length = _rd.randint(1, self._avgTransactionLength + 20)
             st = str()
-            for i in range(length):
+            for _ in range(length):
                 rd = _rd.randint(0, len(items) - 1)
                 item = items[rd]
                 st = st + str(item) + '\t'
             writer.write("%s \n" % st)
             
 if __name__ == "__main__":
-    _ap = str()
+    #_ap = str()
     _ap = createSyntheticGeoreferentialTransaction(100000, 870, 10)
     _ap.createGeoreferentialTransactionalDatabase("T10_geo.txt")
 else:

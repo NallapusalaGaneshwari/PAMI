@@ -272,7 +272,7 @@ class cuAprioriBit(_ab._frequentPatterns):
 
         return bitRep
 
-    @deprecated("It is recommended to use 'mine()' instead of 'startMine()' for mining process. Starting from January 2025, 'startMine()' will be completely terminated.")
+    @deprecated("It is recommended to use 'mine()' instead of 'mine()' for mining process. Starting from January 2025, 'mine()' will be completely terminated.")
     def startMine(self):
         """
         Frequent pattern mining process will start from here
@@ -300,16 +300,16 @@ class cuAprioriBit(_ab._frequentPatterns):
                 iList = list(keys[i])
                 for j in range(i + 1, len(ArraysAndItems)):
                     unionData = _ab._cp.bitwise_and(ArraysAndItems[keys[i]], ArraysAndItems[keys[j]])
-                    sum = _ab._cp.zeros(1, dtype=_ab._np.uint32)
+                    _sum = _ab._cp.zeros(1, dtype=_ab._np.uint32)
                     self._sumKernel((len(unionData) // 32 + 1,), (32,),
-                                    (unionData, sum, _ab._cp.uint32(len(unionData))))
-                    sum = sum[0]
+                                    (unionData, _sum, _ab._cp.uint32(len(unionData))))
+                    _sum = _sum[0]
                     jList = list(keys[j])
                     union = tuple(sorted(set(iList + jList)))
-                    if sum >= self._minSup and union not in self._finalPatterns:
+                    if _sum >= self._minSup and union not in self._finalPatterns:
                         newArraysAndItems[union] = unionData
                         string = "\t".join(union)
-                        self._finalPatterns[string] = sum
+                        self._finalPatterns[string] = _sum
             ArraysAndItems = newArraysAndItems
             # print()
 
@@ -401,7 +401,7 @@ if __name__ == "__main__":
             _ap = cuAprioriBit(_ab._sys.argv[1], _ab._sys.argv[3], _ab._sys.argv[4])
         if len(_ab._sys.argv) == 4:
             _ap = cuAprioriBit(_ab._sys.argv[1], _ab._sys.argv[3])
-        _ap.startMine()
+        _ap.mine()
         _ap.mine()
         print("Total number of Frequent Patterns:", len(_ap.getPatterns()))
         _ap.save(_ab._sys.argv[2])

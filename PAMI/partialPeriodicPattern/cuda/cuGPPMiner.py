@@ -19,7 +19,7 @@ __copyright__ = """
 """
 
 import abstract as _ab
-import deprecated
+from deprecated import deprecated
 
 class cuGPPMiner(_ab._partialPeriodicPatterns):
     """
@@ -71,7 +71,7 @@ class cuGPPMiner(_ab._partialPeriodicPatterns):
 
     :Methods:
 
-        startMine()
+        mine()
             Mining process will start from here
         getPatterns()
             Complete set of patterns will be retrieved with this function
@@ -106,7 +106,7 @@ class cuGPPMiner(_ab._partialPeriodicPatterns):
 
                 obj = alg.gPPMiner("../basic/sampleTDB.txt", "2", "5")
 
-                obj.startMine()
+                obj.mine()
 
                 periodicFrequentPatterns = obj.getPatterns()
 
@@ -250,7 +250,7 @@ class cuGPPMiner(_ab._partialPeriodicPatterns):
         """
         Storing the complete transactions of the database/input file in a database variable
         """
-        plist = []
+        #plist = []
         Database = []
         if isinstance(self._iFile, _ab._pd.DataFrame):
             ts, data = [], []
@@ -332,7 +332,7 @@ class cuGPPMiner(_ab._partialPeriodicPatterns):
                 number += 1
         return newArraysAndItems
 
-    @deprecated("It is recommended to use mine() instead of startMine() for mining process")
+    @deprecated("It is recommended to use mine() instead of mine() for mining process")
     def startMine(self):
 
         self.mine()
@@ -494,7 +494,7 @@ if __name__ == "__main__":
             _ap = cuGPPMiner(_ab._sys.argv[1], _ab._sys.argv[3], _ab._sys.argv[4], _ab._sys.argv[5])
         if len(_ab._sys.argv) == 5:
             _ap = cuGPPMiner(_ab._sys.argv[1], _ab._sys.argv[3], _ab._sys.argv[4])
-        _ap.startMine()
+        _ap.mine()
         print("Total number of Periodic-Frequent Patterns:", len(_ap.getPatterns()))
         _ap.save(_ab._sys.argv[2])
         print("Total Memory in USS:", _ap.getMemoryUSS())

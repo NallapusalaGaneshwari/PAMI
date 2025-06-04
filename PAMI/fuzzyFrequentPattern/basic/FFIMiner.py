@@ -166,6 +166,7 @@ class FFIMiner(_ab._fuzzyFrequentPattenrs):
 
     def __init__(self, iFile: str, minSup: float, sep: str="\t") -> None:
         super().__init__(iFile, minSup, sep)
+        self._Database = None
         self._startTime = 0
         self._endTime = 0
         self._dbLen = 0
@@ -404,7 +405,7 @@ if __name__ == "__main__":
             _ap = FFIMiner(_ab._sys.argv[1], _ab._sys.argv[3], _ab._sys.argv[4])
         if len(_ab._sys.argv) == 4:
             _ap = FFIMiner(_ab._sys.argv[1], _ab._sys.argv[3])
-        _ap.startMine()
+        _ap.mine()
         _ap.mine()
         print("Total number of Fuzzy-Frequent Patterns:", len(_ap.getPatterns()))
         _ap.save(_ab._sys.argv[2])
@@ -413,7 +414,7 @@ if __name__ == "__main__":
         print("Total ExecutionTime in seconds:", _ap.getRuntime())
     else:
         _ap = FFIMiner('/Users/tarunsreepada/Downloads/Fuzzy_T10I4D100K.csv', 400, '\t')
-        # _ap.startMine()
+        # _ap.mine()
         _ap.mine()
         print("Total number of Fuzzy-Frequent Patterns:", len(_ap.getPatterns()))
         _ap.save('output.txt')

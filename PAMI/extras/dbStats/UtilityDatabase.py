@@ -39,6 +39,7 @@ import statistics
 from urllib.request import urlopen
 import pandas as pd
 from typing import Union
+import PAMI.extras.graph.plotLineGraphFromDictionary as plt
 
 class UtilityDatabase:
     """
@@ -80,6 +81,7 @@ class UtilityDatabase:
         self.lengthList = []
         self.utility = {}
         self.sep = sep
+        self.Database,self.utilityValues = None,None
 
     def run(self) -> None:
         self.readDatabase()
@@ -242,11 +244,11 @@ class UtilityDatabase:
         maximum = max([i for i in fre.values()])
         values = [int(i*maximum/6) for i in range(1,6)]
         #print(maximum)
-        va = len({key: val for key, val in fre.items() if val > 0 and val < values[0]})
+        va = len({key: val for key, val in fre.items() if 0 < val < values[0]})
         rangeFrequencies[va] = values[0]
         for i in range(1,len(values)):
             
-            va = len({key: val for key, val in fre.items() if val < values[i] and val > values[i-1]})
+            va = len({key: val for key, val in fre.items() if values[i] > val > values[i - 1]})
             rangeFrequencies[va] = values[i]
         return rangeFrequencies
 
@@ -342,8 +344,6 @@ class UtilityDatabase:
 
 
 if __name__ == '__main__':
-    import PAMI.extras.graph.plotLineGraphFromDictionary as plt
-
     try:
         if len(sys.argv) != 3:
             raise ValueError("Missing some of the input parameters. Format: python UtilityDatabase.py <fileName> <seperator (optional)>")

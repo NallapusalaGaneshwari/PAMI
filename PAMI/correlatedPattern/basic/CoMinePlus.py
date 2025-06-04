@@ -268,7 +268,7 @@ class CoMinePlus(_ab._correlatedPatterns):
                     quit()
 
     
-    def _convert(self, value: Union[int, float, str]) -> None:
+    def _convert(self, value: Union[int, float, str]):
         """
         To convert the type of user specified minSup value
 
@@ -288,7 +288,7 @@ class CoMinePlus(_ab._correlatedPatterns):
                 value = int(value)
         return value
 
-    @deprecated("It is recommended to use 'mine()' instead of 'startMine()' for mining process. Starting from January 2025, 'startMine()' will be completely terminated.")
+    @deprecated("It is recommended to use 'mine()' instead of 'mine()' for mining process. Starting from January 2025, 'mine()' will be completely terminated.")
     def startMine(self) -> None:
         self.mine()
 
@@ -351,7 +351,7 @@ class CoMinePlus(_ab._correlatedPatterns):
         itemNodes = {}
         for transaction, count in transactions:
             transaction = [i for i in transaction if i in itemCounts]
-            transaction = sorted(transaction, key=lambda item: itemCounts[item], reverse=True)
+            transaction = sorted(transaction, key=lambda _item: itemCounts[_item], reverse=True)
             node = newRoot
             for item in transaction:
                 node = node.addChild(item, count)
@@ -417,7 +417,7 @@ class CoMinePlus(_ab._correlatedPatterns):
                         nitemsCounts[trans] = 0
                     nitemsCounts[trans] += count
 
-            nitemsCounts = {k:v for k, v in nitemsCounts.items() if v <= bound and v >= self._minSup}
+            nitemsCounts = {k:v for k, v in nitemsCounts.items() if bound >= v >= self._minSup}
             nitemNode = {}
             for transaction, count in ntransactions:
                 temp = []
@@ -543,7 +543,7 @@ if __name__ == "__main__":
             _ap = CoMinePlus(_ab._sys.argv[1], _ab._sys.argv[3], float(_ab._sys.argv[4]), _ab._sys.argv[5])
         if len(_ab._sys.argv) == 5:
             _ap = CoMinePlus(_ab._sys.argv[1], _ab._sys.argv[3], float(_ab._sys.argv[4]))
-        _ap.startMine()
+        _ap.mine()
         _ap.mine()
         print("Total number of Correlated-Frequent Patterns:", len(_ap.getPatterns()))
         _ap.save(_ab._sys.argv[2])
